@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus — Smart Campus Platform | Indore</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0D0F1A;--paper:#F5F3EE;--cream:#EDE9E0;
+  --blue:#1B3FD8;--blue-light:#E8EDFF;--blue-mid:#4B6EF5;
+  --orange:#F05A28;--orange-light:#FFF0EB;
+  --green:#0A7C4E;--green-light:#E6F7F0;
+  --purple:#6B35C9;--purple-light:#F0EAFF;
+  --gold:#E8A020;--gold-light:#FFF8E6;
+  --red:#E02020;--red-light:#FFF0F0;
+  --pink:#C935A0;--pink-light:#FFE8F7;
+  --teal:#0891B2;--teal-light:#E0F7FA;
+  --border:#E2DDD6;--muted:#7A7568;--card:#FFFFFF;
+  --shadow:0 2px 16px rgba(13,15,26,0.08);
+  --shadow-lg:0 8px 40px rgba(13,15,26,0.14);
+  --r:16px;--rs:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Syne',sans-serif}
+
+/* LOADING */
+#loading-screen{position:fixed;inset:0;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
+.load-logo{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;color:#fff;letter-spacing:-2px;margin-bottom:8px}
+.load-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:32px}
+.load-bar{width:200px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
+.load-fill{height:100%;background:var(--blue-mid);border-radius:2px;animation:lf 1.4s ease-out forwards}
+.load-reset{position:fixed;bottom:20px;right:20px;font-size:11px;color:rgba(255,255,255,0.25);background:none;border:none;cursor:pointer;font-family:inherit;padding:6px 12px;border-radius:6px;transition:.2s}
+.load-reset:hover{color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.08)}
+@keyframes lf{0%{width:0}100%{width:100%}}
+
+/* AUTH */
+#auth-screen{display:none;min-height:100vh;flex-direction:row}
+.auth-left{width:48%;background:var(--ink);display:flex;flex-direction:column;justify-content:center;padding:60px;position:relative;overflow:hidden}
+.auth-left::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(27,63,216,0.25),transparent 70%)}
+.auth-left::after{content:'';position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(107,53,201,0.18),transparent 70%)}
+.auth-logo{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;color:#fff;letter-spacing:-2px;margin-bottom:10px}
+.auth-tagline{font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:360px;margin-bottom:40px}
+.auth-feat{display:flex;align-items:center;gap:14px;color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:14px}
+.auth-feat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.auth-right{width:52%;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--paper)}
+.auth-box{width:100%;max-width:440px}
+.auth-title{font-size:28px;font-weight:800;margin-bottom:6px}
+.auth-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+
+/* ROLE SELECTOR */
+.role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px}
+.role-opt{border:2px solid var(--border);border-radius:12px;padding:12px 10px;text-align:center;cursor:pointer;transition:.2s;background:#fff;user-select:none}
+.role-opt:hover{border-color:var(--blue-mid);background:var(--blue-light)}
+.role-opt.selected{border-color:var(--blue);background:var(--blue-light)}
+.role-opt-icon{font-size:24px;margin-bottom:5px}
+.role-opt-label{font-size:12px;font-weight:700;color:var(--ink)}
+.role-opt-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg2 .fg{margin-bottom:0}
+.fl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.fi{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;background:#fff;transition:.2s;outline:none;width:100%}
+.fi:focus{border-color:var(--blue-mid);box-shadow:0 0 0 3px rgba(27,63,216,0.1)}
+select.fi{cursor:pointer}
+textarea.fi{resize:vertical;min-height:80px}
+
+/* BUTTONS */
+.btn{padding:10px 20px;border-radius:var(--rs);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#1535C0;transform:translateY(-1px)}
+.btn-secondary{background:var(--cream);color:var(--ink);border:1px solid var(--border)}.btn-secondary:hover{background:var(--border)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#085F3C}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-sm{padding:6px 12px;font-size:11px}
+.btn-full{width:100%}
+.btn-primary-lg{background:var(--blue);color:#fff;width:100%;padding:14px;font-size:15px;border-radius:12px;border:none;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.3px;margin-top:4px;transition:.2s}
+.btn-primary-lg:hover{background:#1535C0;transform:translateY(-1px)}
+
+/* AUTH TABS */
+.auth-tabs{display:flex;background:var(--cream);border-radius:10px;padding:3px;margin-bottom:24px}
+.auth-tab{flex:1;padding:9px;text-align:center;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);border:none;background:transparent;font-family:'DM Sans',sans-serif;transition:.2s}
+.auth-tab.active{background:#fff;color:var(--ink);box-shadow:var(--shadow)}
+.auth-form{display:none}.auth-form.active{display:block}
+
+/* DEMO SECTION */
+.demo-section{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.demo-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.demo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.demo-btn{padding:10px;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;text-align:center;background:#fff;transition:.2s;font-family:'DM Sans',sans-serif}
+.demo-btn:hover{border-color:var(--blue-mid);background:var(--blue-light);transform:translateY(-1px)}
+.demo-btn-icon{font-size:20px;margin-bottom:3px;display:block}
+.demo-btn-label{font-size:11px;font-weight:700;color:var(--ink);display:block}
+.demo-btn-sub{font-size:9px;color:var(--muted);display:block}
+
+.err-msg{background:var(--red-light);color:var(--red);padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;display:none;border:1px solid rgba(224,32,32,0.2)}
+.success-msg{background:var(--green-light);color:var(--green);padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;display:none}
+
+/* APP */
+#app-screen{display:none;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;width:240px;height:100vh;background:var(--ink);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.logo-wrap{padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.logo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;letter-spacing:-1px}
+.logo-sub{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+
+/* ROLE BADGE */
+.role-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.rb-student{background:rgba(27,63,216,0.3);color:#7BA7FF}
+.rb-professional{background:rgba(8,145,178,0.3);color:#67E8F9}
+.rb-owner{background:rgba(10,124,78,0.3);color:#6EE7B7}
+.rb-college{background:rgba(107,53,201,0.3);color:#C4B5FD}
+.rb-admin{background:rgba(224,32,32,0.3);color:#FCA5A5}
+
+.user-pill{margin:10px 14px;background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.user-ava{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff;flex-shrink:0}
+.user-name-sb{font-size:12px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.nav{padding:6px 0;flex:1}
+.ns{padding:10px 18px 4px;font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;transition:.2s;border-left:3px solid transparent;color:rgba(255,255,255,0.5);font-size:13px;font-weight:500}
+.ni:hover{background:rgba(255,255,255,0.06);color:#fff;border-left-color:rgba(75,110,245,0.4)}
+.ni.active{background:rgba(27,63,216,0.2);border-left-color:var(--blue-mid);color:#fff}
+.ni-icon{width:18px;text-align:center;font-size:15px}
+.nb{margin-left:auto;background:var(--orange);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px}
+
+.sb-bottom{padding:14px;border-top:1px solid rgba(255,255,255,0.08)}
+.logout-btn{width:100%;padding:9px;background:rgba(224,32,32,0.12);border:1px solid rgba(224,32,32,0.25);border-radius:8px;color:#FCA5A5;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.logout-btn:hover{background:rgba(224,32,32,0.22)}
+.db-dot{width:6px;height:6px;border-radius:50%;background:#4ECA8B;animation:pulse 2s infinite;display:inline-block}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.main{margin-left:240px;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700}
+.tb-right{display:flex;align-items:center;gap:10px}
+.content{padding:24px 28px}
+.screen{display:none}.screen.active{display:block}
+
+/* CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{background:#fff;border-radius:var(--r);padding:18px;border:1px solid var(--border);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:0 var(--r) 0 60px;opacity:.12}
+.sc-bl::before{background:var(--blue)}.sc-or::before{background:var(--orange)}
+.sc-gr::before{background:var(--green)}.sc-pu::before{background:var(--purple)}
+.sc-te::before{background:var(--teal)}.sc-pk::before{background:var(--pink)}
+.stat-icon{font-size:18px;margin-bottom:5px}
+.stat-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:2px}
+.stat-label{font-size:11px;color:var(--muted)}
+.stat-ch{font-size:10px;font-weight:600;margin-top:3px;color:var(--green)}
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--border);padding:18px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+
+/* PG */
+.pg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pg-card{background:#fff;border-radius:var(--r);border:1px solid var(--border);overflow:hidden;transition:.25s;cursor:pointer}
+.pg-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+.pg-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:42px;position:relative}
+.pg-img.boys{background:linear-gradient(135deg,#1B3FD8,#4B6EF5)}
+.pg-img.girls{background:linear-gradient(135deg,#C935A0,#F56BB0)}
+.pg-img.both{background:linear-gradient(135deg,#6B35C9,#4B6EF5)}
+.pg-img.professional{background:linear-gradient(135deg,#0891B2,#06B6D4)}
+.type-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:700}
+.type-badge.boys{background:var(--blue);color:#fff}
+.type-badge.girls{background:#C935A0;color:#fff}
+.type-badge.both{background:var(--purple);color:#fff}
+.type-badge.professional{background:var(--teal);color:#fff}
+.ver-badge{position:absolute;top:8px;right:8px;background:var(--green);color:#fff;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700}
+.ai-badge{position:absolute;bottom:8px;right:8px;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700}
+.ai-fair{background:var(--green);color:#fff}
+.ai-overpriced{background:var(--orange);color:#fff}
+.ai-underpriced{background:var(--blue);color:#fff}
+.pg-body{padding:12px}
+.pg-name{font-weight:700;font-size:13px;margin-bottom:3px}
+.pg-area{font-size:11px;color:var(--muted);margin-bottom:8px}
+.pg-price{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--blue)}
+.pg-price span{font-size:11px;font-weight:400;color:var(--muted)}
+.pg-chips{display:flex;flex-wrap:wrap;gap:4px;margin:7px 0}
+.chip{background:var(--cream);color:var(--muted);padding:2px 7px;border-radius:20px;font-size:10px}
+.chip.blue{background:var(--blue-light);color:var(--blue)}
+.chip.green{background:var(--green-light);color:var(--green)}
+.chip.teal{background:var(--teal-light);color:var(--teal)}
+.pg-footer{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+
+/* FILTER */
+.filter-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.fi-search{flex:1;min-width:180px;padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;background:#fff;outline:none}
+.fi-search:focus,.filter-select:focus{border-color:var(--blue-mid)}
+.filter-select{padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:12px;background:#fff;cursor:pointer;outline:none}
+
+/* SAFETY/ALERT */
+.safety-banner{background:var(--red-light);border:1.5px solid rgba(224,32,32,0.25);border-radius:var(--r);padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px}
+.severity-badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
+.sev-high{background:var(--red-light);color:var(--red)}
+.sev-med{background:var(--orange-light);color:var(--orange)}
+.sev-low{background:var(--green-light);color:var(--green)}
+.sev-blue{background:var(--blue-light);color:var(--blue)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,15,26,0.65);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px;padding:26px;max-width:500px;width:100%;max-height:88vh;overflow-y:auto}
+.modal-title{font-size:19px;font-weight:800;margin-bottom:5px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.modal-close{float:right;background:var(--cream);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;margin-left:10px;display:flex;align-items:center;justify-content:center}
+
+/* AGREEMENT */
+.agr-box{background:var(--blue-light);border:1.5px solid rgba(27,63,216,0.2);border-radius:12px;padding:16px;margin:12px 0}
+.agr-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(27,63,216,0.12);font-size:12px}
+.agr-row:last-child{border-bottom:none}
+
+/* TIMELINE */
+.timeline{padding-left:22px;position:relative}
+.timeline::before{content:'';position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:14px}
+.tl-dot{position:absolute;left:-19px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px var(--border)}
+.tl-green{background:var(--green)}.tl-blue{background:var(--blue)}.tl-orange{background:var(--orange)}.tl-red{background:var(--red)}.tl-gray{background:var(--muted)}
+.tl-title{font-size:12px;font-weight:700}
+.tl-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* TOAST */
+.toast{position:fixed;top:20px;right:20px;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:600;z-index:9999;transform:translateX(120%);transition:.3s;max-width:320px;box-shadow:var(--shadow-lg)}
+.toast.show{transform:translateX(0)}
+.toast-default{background:var(--ink);color:#fff}
+.toast-success{background:var(--green);color:#fff}
+.toast-error{background:var(--red);color:#fff}
+.toast-warning{background:var(--orange);color:#fff}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px}
+.empty-icon{font-size:44px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.empty-sub{font-size:12px;color:var(--muted);max-width:280px;margin:0 auto 16px}
+
+/* STUDENT/PROFESSIONAL CARDS */
+.student-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.student-card{background:#fff;border-radius:var(--r);border:1px solid var(--border);padding:16px}
+.match-bar{height:5px;background:var(--cream);border-radius:3px;overflow:hidden;margin:6px 0}
+.match-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--blue))}
+
+/* BOOK */
+.book-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.book-card{background:#fff;border-radius:var(--r);border:1px solid var(--border);padding:14px}
+
+/* PROFESSIONAL SPECIFIC */
+.amenity-tag{display:inline-block;background:var(--teal-light);color:var(--teal);padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;margin:2px}
+
+@media(max-width:900px){
+  .auth-left{display:none}.auth-right{width:100%}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .pg-grid{grid-template-columns:1fr 1fr}
+  .book-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .sidebar{width:200px}.main{margin-left:200px}
+  .pg-grid,.book-grid,.student-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="load-logo">NEXUS</div>
+  <div class="load-sub">Smart Campus Platform · Indore</div>
+  <div class="load-bar"><div class="load-fill"></div></div>
+  <button class="load-reset" onclick="localStorage.removeItem('nexus_user');location.reload()">↺ Clear session</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-left">
+    <div class="auth-logo">NEXUS</div>
+    <div class="auth-tagline">Indore's smartest platform for students, professionals, PG owners and colleges — no dalals, no middlemen.</div>
+    <div class="auth-feat"><div class="auth-feat-icon" style="background:rgba(27,63,216,0.3)">🏠</div><span>AI-verified PG listings — fair price guaranteed</span></div>
+    <div class="auth-feat"><div class="auth-feat-icon" style="background:rgba(10,124,78,0.3)">🤝</div><span>Digital agreements — no goons, no disputes</span></div>
+    <div class="auth-feat"><div class="auth-feat-icon" style="background:rgba(107,53,201,0.3)">🎓</div><span>Smart roommate matching — split rent, save money</span></div>
+    <div class="auth-feat"><div class="auth-feat-icon" style="background:rgba(8,145,178,0.3)">💼</div><span>Professionals get verified, furnished PGs instantly</span></div>
+    <div class="auth-feat"><div class="auth-feat-icon" style="background:rgba(232,160,32,0.3)">🛡️</div><span>24/7 safety monitoring — you're always protected</span></div>
+      <div style="margin-top:24px;padding:12px 16px;background:rgba(255,255,255,0.05);border-radius:10px;border:1px solid rgba(255,255,255,0.1)">
+      <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px">Also on Nexus</div>
+      <a href="campus.html" style="color:#4B6EF5;font-size:13px;font-weight:600;text-decoration:none">🎓 Nexus Campus — Colleges, Jobs & Books →</a>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="auth-form active" id="form-login">
+        <div class="auth-title">Welcome back 👋</div>
+        <div class="auth-sub">Sign in with your registered email and password</div>
+        <div class="err-msg" id="login-err"></div>
+        <div class="success-msg" id="login-success"></div>
+        <div class="fg">
+          <label class="fl">Email Address</label>
+          <input class="fi" type="email" id="login-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="fg">
+          <label class="fl">Password</label>
+          <div style="position:relative">
+            <input class="fi" type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:42px">
+            <span onclick="togglePwd('login-pass')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;user-select:none">👁</span>
+          </div>
+        </div>
+        <div style="text-align:right;margin-bottom:14px">
+          <span onclick="showForgotPassword()" style="font-size:12px;color:var(--blue);cursor:pointer;text-decoration:underline">Forgot password?</span>
+        </div>
+        <button class="btn-primary-lg" onclick="doLogin()">Sign In →</button>
+        <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--muted)">
+          Don't have an account? <span onclick="switchTab('register')" style="color:var(--blue);cursor:pointer;font-weight:600">Register here →</span>
+        </div>
+        <!-- Admin shortcut only — hidden in production -->
+        <div style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--border);text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Testing / Demo Access</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center">
+            <button onclick="demoLogin('student')" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--cream);cursor:pointer;font-family:'DM Sans'">student</button>
+            <button onclick="demoLogin('professional')" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--cream);cursor:pointer;font-family:'DM Sans'">professional</button>
+            <button onclick="demoLogin('owner')" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--cream);cursor:pointer;font-family:'DM Sans'">owner</button>
+            <button onclick="demoLogin('admin')" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--cream);cursor:pointer;font-family:'DM Sans'">admin</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORGOT PASSWORD -->
+      <div class="auth-form" id="form-forgot">
+        <div class="auth-title">Reset Password 🔑</div>
+        <div class="auth-sub">Enter your registered email — we'll send reset instructions</div>
+        <div class="err-msg" id="forgot-err"></div>
+        <div class="success-msg" id="forgot-success"></div>
+        <div class="fg">
+          <label class="fl">Registered Email</label>
+          <input class="fi" type="email" id="forgot-email" placeholder="you@example.com">
+        </div>
+        <button class="btn-primary-lg" onclick="doForgotPassword()">Send Reset Link →</button>
+        <div style="text-align:center;margin-top:14px">
+          <span onclick="showLogin()" style="font-size:12px;color:var(--blue);cursor:pointer">← Back to Sign In</span>
+        </div>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="auth-form" id="form-register">
+        <div class="auth-title">Create Account 🚀</div>
+        <div class="auth-sub">Are you a Student, Professional or PG Owner?</div>
+        <div class="err-msg" id="reg-err"></div>
+        <div class="success-msg" id="reg-success"></div>
+        <div class="role-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="role-opt selected" id="ro-student" onclick="selectRole('student')">
+            <div class="role-opt-icon">🎓</div>
+            <div class="role-opt-label">Student</div>
+            <div class="role-opt-sub">Find PG, books, colleges</div>
+          </div>
+          <div class="role-opt" id="ro-professional" onclick="selectRole('professional')">
+            <div class="role-opt-icon">💼</div>
+            <div class="role-opt-label">Working Professional</div>
+            <div class="role-opt-sub">Furnished, verified PGs</div>
+          </div>
+          <div class="role-opt" id="ro-owner" onclick="selectRole('owner')">
+            <div class="role-opt-icon">🏠</div>
+            <div class="role-opt-label">PG Owner</div>
+            <div class="role-opt-sub">List & manage PGs</div>
+          </div>
+
+        </div>
+        <div class="fg2" style="margin-bottom:12px">
+          <div class="fg"><label class="fl">Full Name</label><input class="fi" id="reg-name" placeholder="Your full name"></div>
+          <div class="fg"><label class="fl">Phone (WhatsApp)</label><input class="fi" id="reg-phone" placeholder="10-digit number" maxlength="10"></div>
+        </div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="reg-email" placeholder="you@example.com"></div>
+        <div class="fg">
+          <label class="fl">Password</label>
+          <div style="position:relative">
+            <input class="fi" type="password" id="reg-pass" placeholder="Minimum 6 characters" style="padding-right:42px">
+            <span onclick="togglePwd('reg-pass')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px">👁</span>
+          </div>
+        </div>
+        <!-- Student fields -->
+        <div id="fields-student">
+          <div class="fg2">
+            <div class="fg"><label class="fl">College / School</label><input class="fi" id="reg-student-college" placeholder="e.g. DAVV, Medicaps"></div>
+            <div class="fg"><label class="fl">Course</label><input class="fi" id="reg-student-course" placeholder="e.g. B.Tech CSE"></div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Year</label><select class="fi" id="reg-student-year"><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>PG/Masters</option></select></div>
+            <div class="fg"><label class="fl">Gender</label><select class="fi" id="reg-gender"><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Budget (₹/month)</label><input class="fi" type="number" id="reg-budget" placeholder="e.g. 5000"></div>
+            <div class="fg"><label class="fl">Preferred Area</label><select class="fi" id="reg-area"><option value="">Any Area</option><option>Vijay Nagar</option><option>AB Road</option><option>Scheme 54</option><option>Super Corridor</option><option>Bhawarkuan</option><option>MR-10</option></select></div>
+          </div>
+        </div>
+        <!-- Professional fields -->
+        <div id="fields-professional" style="display:none">
+          <div class="fg2">
+            <div class="fg"><label class="fl">Company</label><input class="fi" id="reg-company" placeholder="e.g. TCS, Infosys"></div>
+            <div class="fg"><label class="fl">Designation</label><input class="fi" id="reg-designation" placeholder="e.g. Software Engineer"></div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Budget (₹/month)</label><input class="fi" type="number" id="reg-pro-budget" placeholder="e.g. 9000"></div>
+            <div class="fg"><label class="fl">Gender</label><select class="fi" id="reg-pro-gender"><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></div>
+          </div>
+        </div>
+        <!-- College fields -->
+        <div id="fields-college" style="display:none">
+          <div class="fg"><label class="fl">Institution Name</label><input class="fi" id="reg-college-name" placeholder="e.g. DAVV, Medicaps University"></div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Your Designation</label><select class="fi" id="reg-college-designation"><option>Admission Officer</option><option>Admin / Director</option><option>Registrar</option><option>Principal</option><option>Marketing Head</option></select></div>
+            <div class="fg"><label class="fl">College Type</label><select class="fi" id="reg-college-type"><option value="engineering">Engineering</option><option value="medical">Medical</option><option value="management">Management</option><option value="arts">Arts</option><option value="commerce">Commerce</option><option value="law">Law</option><option value="other">Other</option></select></div>
+          </div>
+          <div class="fg"><label class="fl">Area / Location in Indore</label><input class="fi" id="reg-college-area" placeholder="e.g. Super Corridor, AB Road"></div>
+        </div>
+        <!-- Owner fields -->
+        <div id="fields-owner" style="display:none">
+          <div class="fg"><label class="fl">PG Name</label><input class="fi" id="reg-pg-name" placeholder="e.g. Sunrise Boys PG"></div>
+          <div class="fg"><label class="fl">Area</label><select class="fi" id="reg-owner-area"><option value="">Select area</option><option>Vijay Nagar</option><option>AB Road</option><option>Scheme 54</option><option>Super Corridor</option><option>Bhawarkuan</option><option>MR-10</option></select></div>
+        </div>
+        <button class="btn-primary-lg" onclick="doRegister()">Create My Account →</button>
+        <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--muted)">
+          Already registered? <span onclick="switchTab('login')" style="color:var(--blue);cursor:pointer;font-weight:600">Sign In →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="app-screen">
+  <div class="sidebar">
+    <div class="logo-wrap">
+      <div class="logo">NEXUS</div>
+      <div class="logo-sub">Smart Campus Platform</div>
+    </div>
+    <div class="user-pill">
+      <div class="user-ava" id="sb-ava">U</div>
+      <div style="overflow:hidden">
+        <div class="user-name-sb" id="sb-name">User</div>
+        <div id="sb-role-badge"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px" id="sb-detail"></div>
+      </div>
+    </div>
+    <nav class="nav" id="main-nav"></nav>
+    <div class="sb-bottom">
+      <button class="logout-btn" onclick="doLogout()">← Sign Out</button>
+      <div style="text-align:center;margin-top:8px">
+        <a href="campus.html" style="font-size:10px;color:rgba(255,255,255,0.35);text-decoration:none">🎓 Switch to Nexus Campus</a>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,0.3);margin-top:8px;justify-content:center">
+        <div class="db-dot"></div><span>Supabase connected</span>
+      </div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title" id="topbar-title">Dashboard</div>
+      <div class="tb-right" id="topbar-actions"></div>
+    </div>
+    <div class="content" id="main-content"></div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-pg"><div class="modal"><button class="modal-close" onclick="closeModal('modal-pg')">✕</button><div id="modal-pg-body"></div></div></div>
+<div class="modal-overlay" id="modal-agreement"><div class="modal"><button class="modal-close" onclick="closeModal('modal-agreement')">✕</button><div id="modal-agreement-body"></div></div></div>
+<div class="modal-overlay" id="modal-dispute"><div class="modal"><button class="modal-close" onclick="closeModal('modal-dispute')">✕</button><div id="modal-dispute-body"></div></div></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────
+const SB_URL = 'https://cvdriqyibnmazwnigfhu.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZHJpcXlpYm5tYXp3bmlnZmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDYxNjMsImV4cCI6MjA4ODEyMjE2M30.lf908MW4yKFT8kylFzARk3Bt_ZlDS80iInfLozIOsYQ';
+const SBH = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+
+// ─── STATE ────────────────────────────────────────────────────────
+let CU = null; // current user
+let REG_ROLE = 'student';
+let DATA = { pgs:[], books:[], logs:[] };
+
+// ─── DEMO ACCOUNTS ────────────────────────────────────────────────
+const DEMOS = {
+  student:      {id:'d-student',   name:'Arjun Sharma',   email:'arjun@demo.com',      role:'student',      phone:'9876543210', college:'DAVV Indore', course:'B.Tech CSE', year:'2nd Year', area_pref:'Vijay Nagar', budget:5000, color:'#1B3FD8'},
+  professional: {id:'d-pro',      name:'Neha Joshi',     email:'neha@demo.com',        role:'professional', phone:'9812345671', company:'TCS Indore',  designation:'Software Engineer', exp:'3 years', area_pref:'Super Corridor', budget:9000, color:'#0891B2'},
+  owner:        {id:'d-owner',    name:'Ramesh Patel',   email:'ramesh@demo.com',      role:'owner',        phone:'9812345670', pg_name:'Sunrise Boys PG', area:'Vijay Nagar', color:'#0A7C4E'},
+  admin:        {id:'d-admin',    name:'Nexus Admin',    email:'admin@nexus.in',       role:'admin',        phone:'9999999999', color:'#E02020'},
+};
+
+// ─── SUPABASE ─────────────────────────────────────────────────────
+async function sbGet(t,q=''){try{const r=await fetch(`${SB_URL}/rest/v1/${t}?order=created_at.desc&limit=100${q}`,{headers:SBH});return r.ok?await r.json():[];}catch{return [];}}
+async function sbPost(t,d){try{const r=await fetch(`${SB_URL}/rest/v1/${t}`,{method:'POST',headers:SBH,body:JSON.stringify(d)});const j=await r.json();return Array.isArray(j)?j[0]:j;}catch{return null;}}
+async function sbPatch(t,id,d){try{await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:SBH,body:JSON.stringify(d)});return true;}catch{return false;}}
+
+// ─── AUTH HELPERS ─────────────────────────────────────────────────
+function switchTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',tab==='login'?i===0:i===1));
+  document.getElementById('form-login').classList.toggle('active',tab==='login');
+  document.getElementById('form-register').classList.toggle('active',tab==='register');
+}
+
+function selectRole(r){
+  REG_ROLE = r;
+  ['student','professional','owner'].forEach(x => {
+    const btn = document.getElementById('ro-' + x);
+    if(btn) btn.classList.toggle('selected', x === r);
+    const fields = document.getElementById('fields-' + x);
+    if(fields) fields.style.display = x === r ? 'block' : 'none';
+  });
+}
+
+function togglePwd(id){
+  const el=document.getElementById(id);
+  el.type=el.type==='password'?'text':'password';
+}
+
+function showForgotPassword(){
+  document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
+  document.getElementById('form-forgot').classList.add('active');
+}
+function showLogin(){
+  document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
+  document.getElementById('form-login').classList.add('active');
+}
+
+async function doForgotPassword(){
+  const email=document.getElementById('forgot-email').value.trim();
+  const err=document.getElementById('forgot-err');
+  const suc=document.getElementById('forgot-success');
+  if(!email||!email.includes('@')){showErr(err,'Please enter a valid email address');return;}
+  // Check if user exists
+  const users=await sbGet('nexus_users',`&email=eq.${encodeURIComponent(email)}`);
+  if(!users.length){showErr(err,'No account found with this email. Please register first.');return;}
+  // In production connect to email service like Resend.com
+  suc.style.display='block';
+  suc.textContent=`Reset instructions sent to ${email}. Check your inbox.`;
+  setTimeout(()=>showLogin(),3000);
+}
+
+function selectRole(r){
+  REG_ROLE=r;
+  ['student','professional','owner','college'].forEach(x=>{
+    document.getElementById('ro-'+x).classList.toggle('selected',x===r);
+  });
+  ['student','professional','college','owner'].forEach(x=>{
+    const el=document.getElementById('fields-'+x);
+    if(el) el.style.display=x===r?'block':'none';
+  });
+}
+
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  const err=document.getElementById('login-err');
+  if(!email||!pass){showErr(err,'Please enter your email and password');return;}
+  // Check demo accounts
+  const demo=Object.values(DEMOS).find(d=>d.email===email);
+  if(demo&&(pass==='demo'||pass===demo.email)){CU=demo;saveUser();enterApp();return;}
+  // Check Supabase
+  const users=await sbGet('nexus_users',`&email=eq.${encodeURIComponent(email)}`);
+  if(!users.length){showErr(err,'No account found with this email. Please register first.');return;}
+  const user=users.find(u=>u.password===pass);
+  if(user){CU={...user,color:user.color||'#1B3FD8'};saveUser();enterApp();}
+  else showErr(err,'Incorrect password. Use "Forgot password?" to reset.');
+}
+
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const phone=document.getElementById('reg-phone').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const pass=document.getElementById('reg-pass').value;
+  const err=document.getElementById('reg-err');
+  const suc=document.getElementById('reg-success');
+  err.style.display='none';
+  if(!name||!email||!pass){showErr(err,'Please fill in name, email and password');return;}
+  if(pass.length<6){showErr(err,'Password must be at least 6 characters');return;}
+  if(!email.includes('@')){showErr(err,'Please enter a valid email address');return;}
+  if(phone&&phone.length!==10){showErr(err,'Phone number must be 10 digits');return;}
+  // Check duplicate email
+  const existing=await sbGet('nexus_users',`&email=eq.${encodeURIComponent(email)}`);
+  if(existing.length){
+    showErr(err,'This email is already registered. Please sign in or use Forgot Password.');
+    setTimeout(()=>switchTab('login'),2500);
+    return;
+  }
+  const colors={'student':'#1B3FD8','professional':'#0891B2','pg_owner':'#0A7C4E','college':'#6B35C9'};
+  const user={
+    name, email, phone, role:REG_ROLE, password:pass,
+    color:colors[REG_ROLE]||'#1B3FD8',
+    created_at:new Date().toISOString(),
+    // Role-specific fields
+    college_name: REG_ROLE==='student'?(document.getElementById('reg-student-college')||{}).value||'':'',
+    course: REG_ROLE==='student'?(document.getElementById('reg-student-course')||{}).value||'':'',
+    year_of_study: REG_ROLE==='student'?(document.getElementById('reg-student-year')||{}).value||'':'',
+    gender: REG_ROLE==='student'?(document.getElementById('reg-gender')||{}).value:
+            REG_ROLE==='professional'?(document.getElementById('reg-pro-gender')||{}).value:'',
+    budget_max: REG_ROLE==='student'?parseInt((document.getElementById('reg-budget')||{}).value||0):
+                REG_ROLE==='professional'?parseInt((document.getElementById('reg-pro-budget')||{}).value||0):0,
+    preferred_area: REG_ROLE==='student'?(document.getElementById('reg-area')||{}).value||'':'',
+    company: REG_ROLE==='professional'?(document.getElementById('reg-company')||{}).value||'':'',
+    designation: REG_ROLE==='professional'?(document.getElementById('reg-designation')||{}).value||'':'',
+    pg_name: REG_ROLE==='pg_owner'?(document.getElementById('reg-pg-name')||{}).value||'':'',
+  };
+  const saved=await sbPost('nexus_users',user);
+  CU=saved||{...user,id:'local-'+Date.now()};
+  saveUser();
+  suc.style.display='block';
+  suc.textContent=`Welcome to Nexus, ${name}! Setting up your dashboard... 🎉`;
+  setTimeout(()=>enterApp(),1200);
+}
+function demoLogin(role){CU=DEMOS[role];saveUser();enterApp();}
+function saveUser(){localStorage.setItem('nexus_user',JSON.stringify(CU));}
+function doLogout(){CU=null;localStorage.removeItem('nexus_user');location.reload();}
+function showErr(el,msg){el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',4000);}
+
+// ─── APP ENTRY ────────────────────────────────────────────────────
+async function enterApp(){
+  if(!CU || !CU.name || !CU.role){
+    showAuth();
+    return;
+  }
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+  try{ updateSidebar(); } catch(e){ console.warn('sidebar err',e); }
+  try{ buildNav(); } catch(e){ console.warn('nav err',e); }
+  try{ await loadData(); } catch(e){ console.warn('data err',e); }
+  gotoScreen('dashboard');
+}
+
+function updateSidebar(){
+  if(!CU)return;
+  const ini=CU.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('sb-ava').textContent=ini;
+  document.getElementById('sb-ava').style.background=CU.color||'#1B3FD8';
+  document.getElementById('sb-name').textContent=CU.name;
+  const rbClass={'student':'rb-student','professional':'rb-professional','owner':'rb-owner','college':'rb-college','admin':'rb-admin'};
+  const rbLabel={'student':'Student','professional':'Professional','owner':'PG Owner','college':'College','admin':'Admin'};
+  document.getElementById('sb-role-badge').innerHTML=`<span class="role-badge ${rbClass[CU.role]||'rb-student'}">${rbLabel[CU.role]||CU.role}</span>`;
+  const detail={'student':CU.college||'','professional':CU.company||'','owner':CU.pg_name||'PG Owner','admin':'Nexus Team'};
+  document.getElementById('sb-detail').textContent=detail[CU.role]||'';
+}
+
+async function loadData(){
+  const [pgs,logs]=await Promise.all([sbGet('pg_listings'),sbGet('agent_logs')]);
+  DATA.pgs=pgs.length?pgs:samplePGs();
+  DATA.logs=logs.length?logs:sampleLogs();
+}
+
+// ─── NAV BUILD ────────────────────────────────────────────────────
+const NAV_ITEMS = {
+  student:[
+    {s:'dashboard',icon:'📊',label:'My Dashboard'},
+    {s:'find-pg',icon:'🏠',label:'Find a PG',sec:'HOUSING'},
+    {s:'live-offers',icon:'⚡',label:'Live Deals',badge:'NEW'},
+    {s:'roommate-board',icon:'🏘️',label:'Roommate Board'},
+    {s:'my-bookings',icon:'📋',label:'My Bookings'},
+    {s:'safety',icon:'🛡️',label:'Safety Center',sec:'SUPPORT'},
+    {s:'my-agent',icon:'⚙️',label:'My Preferences'},
+  ],
+  professional:[
+    {s:'dashboard',icon:'📊',label:'My Dashboard'},
+    {s:'find-pg',icon:'🏠',label:'Find a PG',sec:'HOUSING'},
+    {s:'live-offers',icon:'⚡',label:'Live Deals',badge:'NEW'},
+    {s:'roommate-board',icon:'🏘️',label:'Roommate Board'},
+    {s:'my-bookings',icon:'📋',label:'My Bookings'},
+    {s:'safety',icon:'🛡️',label:'Safety Center',sec:'SUPPORT'},
+    {s:'my-agent',icon:'⚙️',label:'My Preferences'},
+  ],
+  owner:[
+    {s:'dashboard',icon:'📊',label:'Dashboard'},
+    {s:'my-listings',icon:'🏠',label:'My Listings',sec:'MANAGE'},
+    {s:'post-pg',icon:'➕',label:'Post New PG'},
+    {s:'live-offers',icon:'⚡',label:'Live Deals'},
+    {s:'inquiries',icon:'💬',label:'Inquiries'},
+    {s:'agreements',icon:'📝',label:'Agreements',sec:'LEGAL'},
+    {s:'disputes',icon:'⚖️',label:'Disputes'},
+    {s:'earnings',icon:'💰',label:'Earnings',sec:'FINANCE'},
+    {s:'safety',icon:'🛡️',label:'Safety Center'},
+  ],
+
+  admin:[
+    {s:'dashboard',icon:'📊',label:'Admin Dashboard'},
+    {s:'all-listings',icon:'🏠',label:'All Listings',sec:'PLATFORM'},
+    {s:'all-users',icon:'👥',label:'All Users'},
+    {s:'fraud-alerts',icon:'🚨',label:'Fraud Alerts',badge:'2'},
+    {s:'disputes',icon:'⚖️',label:'Disputes',badge:'1'},
+    {s:'safety',icon:'🛡️',label:'Safety Monitor',sec:'SAFETY'},
+    {s:'agent-logs',icon:'🤖',label:'Agent Logs'},
+    {s:'revenue',icon:'💰',label:'Revenue',sec:'FINANCE'},
+  ]
+};
+
+function buildNav(){
+  const items=NAV_ITEMS[CU.role]||NAV_ITEMS.student;
+  let html='';
+  items.forEach(it=>{
+    if(it.sec)html+=`<div class="ns">${it.sec}</div>`;
+    html+=`<div class="ni" id="nav-${it.s}" onclick="gotoScreen('${it.s}')">`+
+      `<span class="ni-icon">${it.icon}</span>${it.label}`+
+      (it.badge?`<span class="nb">${it.badge}</span>`:'')+`</div>`;
+  });
+  document.getElementById('main-nav').innerHTML=html;
+}
+
+// ─── ROUTING ─────────────────────────────────────────────────────
+const TITLES={
+  'dashboard':'Dashboard','find-pg':'Find a PG','my-bookings':'My Bookings',
+
+  'safety':'Safety Center','my-agent':'My Preferences','my-listings':'My PG Listings',
+  'post-pg':'Post New PG','inquiries':'Student Inquiries','agreements':'Rental Agreements',
+  'disputes':'Dispute Resolution','earnings':'Earnings & Revenue','student-pool':'Student Pool',
+
+  'all-listings':'All Listings','all-users':'All Users','fraud-alerts':'Fraud Alerts',
+  'agent-logs':'Agent Logs','revenue':'Revenue Dashboard',
+  'live-offers':'⚡ Nexus Live Deals','roommate-board':'🏘️ Roommate Board',
+  
+};
+
+function gotoScreen(s){
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const nav=document.getElementById('nav-'+s);
+  if(nav)nav.classList.add('active');
+  document.getElementById('topbar-title').textContent=TITLES[s]||s;
+  const renders={
+    'dashboard':renderDashboard,'find-pg':renderFindPG,'my-bookings':renderMyBookings,
+'college-matches':renderCollegeMatches,'my-offers':renderMyOffers,
+    'safety':renderSafety,'my-agent':renderMyAgent,'my-listings':renderMyListings,
+    'post-pg':renderPostPG,'inquiries':renderInquiries,'agreements':renderAgreements,
+    'disputes':renderDisputes,'earnings':renderEarnings,'student-pool':renderStudentPool,
+
+    'all-listings':renderAllListings,'all-users':renderAllUsers,'fraud-alerts':renderFraudAlerts,
+    'agent-logs':renderAgentLogs,'revenue':renderRevenue,
+    'live-offers':renderLiveOffers,'roommate-board':renderRoommateBoard,
+
+  };
+  if(renders[s])renders[s]();
+  else setHTML(`<div class="empty"><div class="empty-icon">🚧</div><div class="empty-title">Coming Soon</div><div class="empty-sub">This section is under development</div></div>`);
+}
+
+function setHTML(h){document.getElementById('main-content').innerHTML=h;}
+
+// ─── DASHBOARD (ROLE-AWARE) ───────────────────────────────────────
+function renderDashboard(){
+  const r=CU.role;
+  if(r==='student')renderStudentDB();
+  else if(r==='professional')renderProfessionalDB();
+  else if(r==='owner')renderOwnerDB();
+  else renderAdminDB();
+}
+
+function renderStudentDB(){
+  const pg=DATA.pgs.filter(p=>!CU.area_pref||p.area===CU.area_pref).length;
+  setHTML(`
+    <div style="margin-bottom:18px">
+      <h2 style="font-size:20px;margin-bottom:4px">Welcome back, ${CU.name.split(' ')[0]} 👋</h2>
+      <p style="color:var(--muted);font-size:13px">Your AI agent worked overnight. Here's what's new for you.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card sc-bl"><div class="stat-icon">🏠</div><div class="stat-num">${pg}</div><div class="stat-label">PGs in your area</div><div class="stat-ch">↑ 3 new today</div></div>
+      <div class="stat-card sc-pu"><div class="stat-icon">🎓</div><div class="stat-num">4</div><div class="stat-label">College matches</div><div class="stat-ch">1 new offer</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">📚</div><div class="stat-num">${DATA.books.length}</div><div class="stat-label">Books available</div><div class="stat-ch">Save up to 60%</div></div>
+      <div class="stat-card sc-gr"><div class="stat-icon">🛡️</div><div class="stat-num">Safe</div><div class="stat-label">Your area status</div><div class="stat-ch">No alerts today</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px">
+      <div class="card">
+        <div class="card-title">🏠 Recommended PGs for You <button class="btn btn-sm btn-secondary" onclick="gotoScreen('find-pg')">View All →</button></div>
+        ${DATA.pgs.slice(0,3).map(miniPGCard).join('')}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="card-title">🤖 AI Agent — Last Night</div>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-dot tl-green"></div><div class="tl-title">Price check done</div><div class="tl-sub">${CU.area_pref||'Vijay Nagar'} avg: ₹4,200/mo</div></div>
+            <div class="tl-item"><div class="tl-dot tl-blue"></div><div class="tl-title">3 new PGs matched</div><div class="tl-sub">Based on your preferences</div></div>
+            <div class="tl-item"><div class="tl-dot tl-orange"></div><div class="tl-title">1 college offer ready</div><div class="tl-sub">IIM Indore — MBA</div></div>
+          </div>
+          <button class="btn btn-sm btn-secondary btn-full" style="margin-top:10px" onclick="gotoScreen('my-agent')">Full agent log →</button>
+        </div>
+        <div class="card" style="background:var(--green-light);border-color:var(--green)">
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px">🛡️ Safety: All Clear</div>
+          <div style="font-size:11px;color:var(--muted)">No incidents in ${CU.area_pref||'your area'} today. 24/7 AI monitoring active.</div>
+          <button class="btn btn-sm btn-secondary btn-full" style="margin-top:8px" onclick="gotoScreen('safety')">Safety Center</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+function renderProfessionalDB(){
+  const pg=DATA.pgs.filter(p=>p.type==='professional'||p.type==='both').length;
+  setHTML(`
+    <div style="margin-bottom:18px">
+      <h2 style="font-size:20px;margin-bottom:4px">Welcome, ${CU.name.split(' ')[0]} 💼</h2>
+      <p style="color:var(--muted);font-size:13px">${CU.company||'Your company'} · Nexus finds verified, furnished PGs for professionals.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card sc-te"><div class="stat-icon">🏠</div><div class="stat-num">${pg||4}</div><div class="stat-label">Professional PGs</div><div class="stat-ch">Furnished &amp; verified</div></div>
+      <div class="stat-card sc-gr"><div class="stat-icon">✅</div><div class="stat-num">All</div><div class="stat-label">AI-verified listings</div><div class="stat-ch">No scams, guaranteed</div></div>
+      <div class="stat-card sc-bl"><div class="stat-icon">📝</div><div class="stat-num">0</div><div class="stat-label">Active agreements</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">💰</div><div class="stat-num">₹0</div><div class="stat-label">Dalal fees saved</div><div class="stat-ch">vs ₹3,000–5,000 normally</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px">
+      <div class="card">
+        <div class="card-title">🏠 Best Professional PGs <button class="btn btn-sm btn-secondary" onclick="gotoScreen('find-pg')">View All →</button></div>
+        <div style="background:var(--teal-light);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--teal)">
+          💼 <strong>Professional filter ON</strong> — showing furnished, Wi-Fi included, near IT parks &amp; offices
+        </div>
+        ${DATA.pgs.slice(0,3).map(miniPGCard).join('')}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="card-title">⚡ Why Professionals Choose Nexus</div>
+          ${[['No broker fee','Zero dalal commission — ever'],['Digital agreement','Sign on phone in 2 minutes'],['AI price check','Never pay above market rate'],['Quick move-in','Most PGs available in 3 days']].map(([t,s])=>`<div style="display:flex;gap:10px;margin-bottom:10px;align-items:start"><span style="color:var(--green);font-size:16px">✓</span><div><div style="font-size:12px;font-weight:700">${t}</div><div style="font-size:11px;color:var(--muted)">${s}</div></div></div>`).join('')}
+        </div>
+        <div class="card" style="background:var(--teal-light);border-color:var(--teal)">
+          <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:6px">🤖 AI Agent Active</div>
+          <div style="font-size:11px;color:var(--muted)">Your agent monitors new PGs near ${CU.area_pref||'your office'} and alerts you instantly.</div>
+        </div>
+      </div>
+    </div>`);
+}
+
+function renderOwnerDB(){
+  const myPGs=DATA.pgs.slice(0,2);
+  setHTML(`
+    <div style="margin-bottom:18px">
+      <h2 style="font-size:20px;margin-bottom:4px">Owner Dashboard — ${CU.name} 🏠</h2>
+      <p style="color:var(--muted);font-size:13px">Manage listings &amp; tenants — no middlemen needed.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card sc-bl"><div class="stat-icon">🏠</div><div class="stat-num">2</div><div class="stat-label">Active listings</div></div>
+      <div class="stat-card sc-gr"><div class="stat-icon">💬</div><div class="stat-num">5</div><div class="stat-label">Inquiries today</div><div class="stat-ch">↑ 2 from yesterday</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">📝</div><div class="stat-num">3</div><div class="stat-label">Active agreements</div></div>
+      <div class="stat-card sc-pu"><div class="stat-icon">⚖️</div><div class="stat-num">0</div><div class="stat-label">Open disputes</div><div class="stat-ch" style="color:var(--green)">All resolved ✓</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px">
+      <div class="card">
+        <div class="card-title">📊 AI Pricing — Last Night <span style="font-size:11px;color:var(--muted);font-weight:400">Updated 00:30 IST</span></div>
+        ${myPGs.map(pg=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-weight:700;font-size:13px">${pg.name||'My PG'}</div><div style="font-size:11px;color:var(--muted)">${pg.area||'Indore'} · ₹${pg.rent||4200}/mo</div></div>
+            <div style="text-align:right">
+              <span class="severity-badge ${pg.ai_verdict==='overpriced'?'sev-high':pg.ai_verdict==='underpriced'?'sev-blue':'sev-low'}">${(pg.ai_verdict||'FAIR').toUpperCase()}</span>
+              <div style="font-size:10px;color:var(--muted);margin-top:3px">AI: ₹${pg.ai_suggested_price||pg.rent||4200}</div>
+            </div>
+          </div>`).join('')}
+        <button class="btn btn-sm btn-secondary btn-full" style="margin-top:12px" onclick="gotoScreen('my-listings')">Manage All Listings →</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="card-title">⚖️ Legal Protection</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Digital agreements protect you from tenant disputes. No goons needed — ever.</div>
+          <button class="btn btn-sm btn-green btn-full" onclick="openAgreementModal('New Tenant')">📝 New Agreement</button>
+          <button class="btn btn-sm btn-secondary btn-full" style="margin-top:6px" onclick="gotoScreen('disputes')">View Disputes</button>
+        </div>
+        <div class="card" style="background:var(--green-light);border-color:var(--green)">
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:4px">✅ Nexus Verified Owner</div>
+          <div style="font-size:11px;color:var(--muted)">Your listings rank first. 0 complaints on record.</div>
+        </div>
+      </div>
+    </div>`);
+}
+
+
+function renderAdminDB(){
+  setHTML(`
+    <div style="margin-bottom:18px">
+      <h2 style="font-size:20px;margin-bottom:4px">Admin — Platform Overview ⚙️</h2>
+      <p style="color:var(--muted);font-size:13px">Real-time platform health, safety monitoring and agent status.</p>
+    </div>
+    <div class="safety-banner">
+      <span style="font-size:22px">⚠️</span>
+      <div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--red)">2 listings flagged for fraud review</div><div style="font-size:12px;color:var(--muted)">AI fraud agent detected suspicious patterns last night</div></div>
+      <button class="btn btn-sm btn-red" onclick="gotoScreen('fraud-alerts')">Review Now</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card sc-bl"><div class="stat-icon">🏠</div><div class="stat-num">${DATA.pgs.length}</div><div class="stat-label">Total listings</div></div>
+      <div class="stat-card sc-gr"><div class="stat-icon">👥</div><div class="stat-num">342</div><div class="stat-label">Registered users</div><div class="stat-ch">↑ 12 today</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">🚨</div><div class="stat-num">2</div><div class="stat-label">Fraud alerts</div></div>
+      <div class="stat-card sc-pu"><div class="stat-icon">⚖️</div><div class="stat-num">1</div><div class="stat-label">Open disputes</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px">
+      <div class="card">
+        <div class="card-title">🚨 Safety Alerts <button class="btn btn-sm btn-secondary" onclick="gotoScreen('safety')">Full Monitor →</button></div>
+        ${sampleAlerts().map(a=>`
+          <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:start">
+            <div style="width:36px;height:36px;border-radius:10px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${a.icon}</div>
+            <div style="flex:1"><div style="font-weight:700;font-size:12px">${a.title}</div><div style="font-size:11px;color:var(--muted)">${a.sub}</div></div>
+            <span class="severity-badge sev-${a.sev}">${a.sev.toUpperCase()}</span>
+          </div>`).join('')}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="card-title">🤖 Agent Status</div>
+          ${[['Pricing Agent','Ran 2:00 AM · listings analyzed','✅','var(--green)'],['Fraud Agent','2 flags raised · review needed','⚠️','var(--orange)'],['Vacancy Agent','Nudges generated + 60d auto-paused','✅','var(--green)'],['Negotiation Agent','Live offers posted every 6h','✅','var(--green)'],['Roommate Agent','Profiles matched · notifications sent','✅','var(--green)']].map(([n,s,i,c])=>`<div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><span style="font-size:18px">${i}</span><div style="flex:1"><div style="font-size:12px;font-weight:700">${n}</div><div style="font-size:10px;color:var(--muted)">${s}</div></div></div>`).join('')}
+          <button class="btn btn-sm btn-secondary btn-full" onclick="gotoScreen('agent-logs')">View All Logs →</button>
+        </div>
+        <div class="card"><div class="card-title">💰 Revenue Today</div><div style="font-family:'Syne';font-size:26px;font-weight:800;color:var(--green)">₹2,340</div><div style="font-size:11px;color:var(--muted)">Agreements + verified listings</div><button class="btn btn-sm btn-secondary btn-full" style="margin-top:8px" onclick="gotoScreen('revenue')">Full Report →</button></div>
+      </div>
+    </div>`);
+}
+
+// ─── FIND PG (works for all roles) ───────────────────────────────
+function renderFindPG(){
+  const isPro = CU.role==='professional';
+  setHTML(`
+    ${isPro?`<div style="background:var(--teal-light);border:1.5px solid var(--teal);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--teal)">💼 <strong>Professional mode:</strong> Showing furnished, verified PGs suitable for working professionals. <button class="btn btn-sm" style="background:var(--teal);color:#fff;margin-left:8px" onclick="">Show All PGs</button></div>`:''}
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+      <button id="gps-btn" class="btn btn-sm" onclick="detectLocation()" 
+        style="background:var(--green);color:#fff;white-space:nowrap;flex-shrink:0">
+        📍 Near Me
+      </button>
+      <input class="fi-search" id="s-city" placeholder="City (e.g. Indore, Bhopal, Mumbai)" 
+        oninput="filterPGs()" style="flex:1;min-width:150px">
+      <div id="location-badge" style="font-size:11px;color:var(--green);font-weight:600"></div>
+    </div>
+    <div class="filter-bar">
+      <input class="fi-search" id="s-search" placeholder="🔍 Search by name, area..." oninput="filterPGs()">
+      <select class="filter-select" id="s-area" onchange="filterPGs()">
+        <option value="">All Areas</option>
+        <option>Vijay Nagar</option><option>AB Road</option><option>Scheme 54</option>
+        <option>Super Corridor</option><option>Bhawarkuan</option><option>MR-10</option><option>Old Palasia</option>
+      </select>
+      <select class="filter-select" id="s-type" onchange="filterPGs()">
+        <option value="">Boys &amp; Girls</option>
+        <option value="boys">Boys Only</option><option value="girls">Girls Only</option>
+        <option value="both">Co-living</option><option value="professional">Professional</option>
+      </select>
+      <select class="filter-select" id="s-budget" onchange="filterPGs()">
+        <option value="">Any Budget</option>
+        <option value="3000">Under ₹3,000</option><option value="5000">Under ₹5,000</option>
+        <option value="7000">Under ₹7,000</option><option value="10000">Under ₹10,000</option>
+      </select>
+      <select class="filter-select" id="s-verified" onchange="filterPGs()">
+        <option value="">All Listings</option>
+        <option value="yes">Verified Only</option>
+        <option value="fair">AI: Fair Price</option>
+      </select>
+    </div>
+    <div id="pg-count" style="font-size:12px;color:var(--muted);margin-bottom:14px"></div>
+    <div class="pg-grid" id="pg-results"></div>`);
+  filterPGs();
+}
+
+function filterPGs(){
+  const search=(document.getElementById('s-search')||{}).value||'';
+  const area=(document.getElementById('s-area')||{}).value||'';
+  const cityInput=(document.getElementById('s-city')||{}).value?.trim().toLowerCase()||'';
+  const type=(document.getElementById('s-type')||{}).value||'';
+  const budget=parseInt((document.getElementById('s-budget')||{}).value)||999999;
+  const verified=(document.getElementById('s-verified')||{}).value||'';
+  let list=DATA.pgs.filter(pg=>{
+    const n=(pg.name||'').toLowerCase(), a=(pg.area||'').toLowerCase(), c=(pg.college||'').toLowerCase();
+    if(search&&!n.includes(search.toLowerCase())&&!a.includes(search.toLowerCase())&&!c.includes(search.toLowerCase()))return false;
+    if(area&&pg.area!==area)return false;
+    if(cityInput){
+      const pgCity=(pg.city||'indore').toLowerCase();
+      const pgArea=(pg.area||'').toLowerCase();
+      if(!pgCity.includes(cityInput)&&!pgArea.includes(cityInput))return false;
+    }
+    if(type&&pg.type!==type)return false;
+    if((pg.rent||0)>budget)return false;
+    if(verified==='yes'&&!pg.verified)return false;
+    if(verified==='fair'&&pg.ai_verdict!=='fair')return false;
+    return true;
+  });
+  const cnt=document.getElementById('pg-count');
+  if(cnt)cnt.textContent=`${list.length} PG${list.length!==1?'s':''} found`;
+  const res=document.getElementById('pg-results');
+  if(!res)return;
+  if(!list.length){
+    res.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div class="empty-title">No PGs found</div><div class="empty-sub">Try changing your filters or search term</div><button class="btn btn-primary" onclick="document.getElementById('s-search').value='';document.getElementById('s-area').value='';filterPGs()">Clear Filters</button></div>`;
+    return;
+  }
+  res.innerHTML=list.map(pgCard).join('');
+}
+
+// ─── PG CARD ─────────────────────────────────────────────────────
+function pgCard(pg){
+  const type=pg.type||'boys';
+  const facs=(pg.facilities||[]).slice(0,3);
+  return `<div class="pg-card" onclick="openPGModal(${encodeURIComponent(JSON.stringify(pg))})">
+    <div class="pg-img ${type}">
+      <span>${pg.emoji||'🏠'}</span>
+      <span class="type-badge ${type}">${type.toUpperCase()}</span>
+      ${pg.verified?'<span class="ver-badge">✓ VERIFIED</span>':''}
+      ${pg.ai_verdict?`<span class="ai-badge ai-${pg.ai_verdict}">${pg.ai_verdict.toUpperCase()}</span>`:''}
+    </div>
+    <div class="pg-body">
+      <div class="pg-name">${pg.name||'PG Listing'}</div>
+      <div class="pg-area">📍 ${pg.area||'Indore'}</div>
+      <div class="pg-price">₹${(pg.rent||0).toLocaleString()}<span>/bed/month</span></div>
+      <div class="pg-chips">
+        ${facs.map(f=>`<span class="chip">${f}</span>`).join('')}
+        ${pg.beds?`<span class="chip blue">${pg.beds} beds</span>`:''}
+        ${pg.food?`<span class="chip green">${pg.food}</span>`:''}
+      </div>
+      <div class="pg-footer">
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openAgreementModal('${(pg.name||'').replace(/'/g,"\\'")}')">📝 Book</button>
+        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();toast('Saved to shortlist ❤️','success')">♡ Save</button>
+        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();toast('Video tour requested! Owner will confirm.','success')">📹 Tour</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function miniPGCard(pg){
+  return `<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;align-items:center" onclick="openPGModal(${encodeURIComponent(JSON.stringify(pg))})">
+    <div class="pg-img ${pg.type||'boys'}" style="width:46px;height:46px;border-radius:10px;min-width:46px;font-size:18px">${pg.emoji||'🏠'}</div>
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:13px">${pg.name||'PG'}</div>
+      <div style="font-size:11px;color:var(--muted)">${pg.area||'Indore'} · ₹${(pg.rent||0).toLocaleString()}/mo</div>
+    </div>
+    ${pg.ai_verdict?`<span class="ai-badge ai-${pg.ai_verdict}" style="position:static;white-space:nowrap">${pg.ai_verdict.toUpperCase()}</span>`:''}
+  </div>`;
+}
+
+// ─── BOOKS ───────────────────────────────────────────────────────
+
+function filterBooks(){
+  const s=(document.getElementById('b-search')||{}).value||'';
+  const sub=(document.getElementById('b-sub')||{}).value||'';
+  const cond=(document.getElementById('b-cond')||{}).value||'';
+  const list=DATA.books.filter(b=>
+    (!s||(b.title||'').toLowerCase().includes(s.toLowerCase())||(b.author||'').toLowerCase().includes(s.toLowerCase()))&&
+    (!sub||b.subject===sub)&&(!cond||b.condition===cond));
+  const el=document.getElementById('b-results');
+  if(!el)return;
+  el.innerHTML=list.map(b=>`
+    <div class="book-card">
+      <div style="font-size:36px;margin-bottom:10px">${b.emoji||'📚'}</div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:3px">${b.title||'Book'}</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${b.author||''} · ${b.edition||''} Ed.</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-family:'Syne';font-size:18px;font-weight:800;color:var(--green)">₹${b.price||0}</span>
+        <span style="font-size:11px;color:var(--muted);text-decoration:line-through">₹${b.mrp||0}</span>
+        <span style="font-size:10px;font-weight:700;color:var(--orange);background:var(--orange-light);padding:2px 6px;border-radius:20px">${Math.round((1-(b.price||0)/(b.mrp||1))*100)}% OFF</span>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px">
+        <span class="chip">${b.condition||'Good'}</span>
+        <span class="chip ${b.seller_type==='student'?'blue':''}">${b.seller_type||'student'}</span>
+        ${b.delivery?`<span class="chip">${b.delivery}</span>`:''}
+      </div>
+      <button class="btn btn-green btn-full btn-sm" onclick="toast('Seller contact opened on WhatsApp!','success')">💬 Contact Seller</button>
+    </div>`).join('')||`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📚</div><div class="empty-title">No books found</div><div class="empty-sub">Try different filters</div></div>`;
+}
+
+// ─── OWNER: POST PG ───────────────────────────────────────────────
+function renderPostPG(){
+  setHTML(`
+    <div class="card" style="max-width:680px">
+      <div class="card-title">🏠 Post Your PG Listing</div>
+      <div style="background:var(--blue-light);border-radius:10px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:var(--blue)">🤖 AI will verify your listing tonight — price analysis, fraud check, and Verified badge if all checks pass.</div>
+      <div class="fg2" style="margin-bottom:12px">
+        <div class="fg"><label class="fl">PG Name</label><input class="fi" id="p-name" placeholder="e.g. Sunrise Boys PG"></div>
+        <div class="fg"><label class="fl">Area</label><select class="fi" id="p-area"><option>Vijay Nagar</option><option>AB Road</option><option>Scheme 54</option><option>Super Corridor</option><option>Bhawarkuan</option><option>MR-10</option></select></div>
+        <div class="fg"><label class="fl">Type</label><select class="fi" id="p-type"><option value="boys">Boys Only</option><option value="girls">Girls Only</option><option value="both">Both (Co-living)</option><option value="professional">Professional</option></select></div>
+        <div class="fg"><label class="fl">Beds Available</label><input class="fi" type="number" id="p-beds" placeholder="3"></div>
+        <div class="fg"><label class="fl">Rent (₹/bed/month)</label><input class="fi" type="number" id="p-rent" placeholder="4200"></div>
+        <div class="fg"><label class="fl">Room Type</label><select class="fi" id="p-room"><option>Single</option><option>Double Sharing</option><option>Triple Sharing</option></select></div>
+      </div>
+      <div class="fg" style="margin-bottom:12px"><label class="fl">Full Address</label><input class="fi" id="p-addr" placeholder="Plot no., Street, Landmark, Pincode"></div>
+      <div style="margin-bottom:14px"><div class="fl" style="margin-bottom:8px">Facilities</div>
+        <div id="fac-wrap" style="display:flex;flex-wrap:wrap;gap:8px">
+          ${['Wi-Fi','AC','Mess/Food','Laundry','Parking','CCTV','Geyser','Attached Bath','Study Room','Fridge','Gym'].map(f=>`<div style="background:var(--cream);border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:12px;transition:.15s" onclick="toggleFac(this)">${f}</div>`).join('')}
+        </div>
+      </div>
+      <div class="fg2" style="margin-bottom:14px">
+        <div class="fg"><label class="fl">Food</label><select class="fi" id="p-food"><option>Veg Only</option><option>Non-Veg Available</option><option>Self-Cook</option></select></div>
+        <div class="fg"><label class="fl">Your WhatsApp</label><input class="fi" id="p-phone" placeholder="10-digit number"></div>
+      </div>
+      <div class="fg" style="margin-bottom:18px"><label class="fl">Description</label><textarea class="fi" id="p-desc" placeholder="What makes your PG special? Mention nearby colleges, transport, any unique features..."></textarea></div>
+      <button class="btn btn-primary btn-full" onclick="submitPG()">Submit for AI Verification →</button>
+    </div>`);
+}
+
+function toggleFac(el){
+  const on=el.style.background!=='rgb(232, 237, 255)';
+  el.style.background=on?'var(--blue-light)':'var(--cream)';
+  el.style.borderColor=on?'var(--blue-mid)':'var(--border)';
+  el.style.color=on?'var(--blue)':'inherit';
+}
+
+async function submitPG(){
+  const name=document.getElementById('p-name').value.trim();
+  if(!name){toast('Please enter PG name','error');return;}
+  const facs=Array.from(document.querySelectorAll('#fac-wrap div')).filter(d=>d.style.background==='rgb(232, 237, 255)'||d.style.background.includes('232')).map(d=>d.textContent);
+  const pg={name,area:document.getElementById('p-area').value,type:document.getElementById('p-type').value,
+    beds:parseInt(document.getElementById('p-beds').value)||1,rent:parseInt(document.getElementById('p-rent').value)||4000,
+    room_type:document.getElementById('p-room').value,address:document.getElementById('p-addr').value,
+    food:document.getElementById('p-food').value,phone:document.getElementById('p-phone').value,
+    description:document.getElementById('p-desc').value,facilities:facs,emoji:'🏠',poster:'owner',
+    verified:false,status:'active',created_at:new Date().toISOString()};
+  const saved=await sbPost('pg_listings',pg);
+  if(saved)DATA.pgs.unshift(saved);
+  else DATA.pgs.unshift(pg);
+  toast('Listing submitted! AI will verify tonight and WhatsApp you the result.','success');
+  setTimeout(()=>gotoScreen('my-listings'),1500);
+}
+
+// ─── OWNER: LISTINGS ─────────────────────────────────────────────
+function renderMyListings(){
+  setHTML(`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div style="font-size:13px;color:var(--muted)">${DATA.pgs.slice(0,3).length} listings active</div>
+      <button class="btn btn-primary btn-sm" onclick="gotoScreen('post-pg')">➕ Post New PG</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+    ${DATA.pgs.slice(0,3).map(pg=>`
+      <div class="card" style="display:flex;gap:14px;align-items:center">
+        <div class="pg-img ${pg.type||'boys'}" style="width:72px;height:72px;border-radius:12px;min-width:72px;font-size:26px">${pg.emoji||'🏠'}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:14px;margin-bottom:3px">${pg.name||'PG'}</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:7px">${pg.area||'Indore'} · ₹${pg.rent||0}/mo · ${pg.beds||0} beds · ${pg.type||'boys'}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="severity-badge ${pg.ai_verdict==='overpriced'?'sev-high':pg.ai_verdict==='underpriced'?'sev-blue':'sev-low'}">AI: ${(pg.ai_verdict||'unanalyzed').toUpperCase()}</span>
+            <span class="severity-badge ${!pg.fraud_score||pg.fraud_score<40?'sev-low':'sev-high'}">Fraud: ${pg.fraud_score||0}/100</span>
+            <span class="severity-badge ${pg.verified?'sev-low':'sev-med'}">${pg.verified?'✓ VERIFIED':'PENDING'}</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;min-width:90px">
+          <button class="btn btn-sm btn-secondary" onclick="toast('Edit form coming soon')">Edit</button>
+          <button class="btn btn-sm btn-green" onclick="toast('Marked as filled','success')">Mark Filled</button>
+          <button class="btn btn-sm btn-red" onclick="toast('Listing paused')">Pause</button>
+        </div>
+      </div>`).join('')}
+    </div>`);
+}
+
+// ─── OWNER: AGREEMENTS ───────────────────────────────────────────
+function renderAgreements(){
+  setHTML(`
+    <button class="btn btn-green" style="margin-bottom:18px" onclick="openAgreementModal('New Tenant')">📝 Generate New Agreement</button>
+    <div style="display:flex;flex-direction:column;gap:14px">
+    ${[{t:'Amit Kumar',pg:'Sunrise Boys PG',start:'1 Mar 2026',rent:'₹4,200',dep:'₹8,400',s:'Active'},
+       {t:'Vikas Sharma',pg:'Sunrise Boys PG',start:'1 Jan 2026',rent:'₹4,200',dep:'₹8,400',s:'Active'},
+       {t:'Deepak Joshi',pg:'Green Villa PG',start:'1 Dec 2025',rent:'₹5,500',dep:'₹11,000',s:'Ended'}].map(a=>`
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+          <div><div style="font-weight:700;font-size:14px">📝 ${a.t}</div><div style="font-size:11px;color:var(--muted)">${a.pg} · Since ${a.start}</div></div>
+          <span class="severity-badge ${a.s==='Active'?'sev-low':'sev-med'}">${a.s}</span>
+        </div>
+        <div class="agr-box">
+          <div class="agr-row"><span>Monthly Rent</span><strong>${a.rent}</strong></div>
+          <div class="agr-row"><span>Security Deposit</span><strong>${a.dep}</strong></div>
+          <div class="agr-row"><span>Notice Period</span><strong>30 days</strong></div>
+          <div class="agr-row"><span>Digital Signature</span><strong style="color:var(--green)">✓ Both parties signed</strong></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm btn-secondary">Download PDF</button>
+          ${a.s==='Active'?`<button class="btn btn-sm btn-red" onclick="openDisputeModal('${a.t}')">⚖️ Raise Dispute</button>`:''}
+        </div>
+      </div>`).join('')}
+    </div>`);
+}
+
+// ─── OWNER: DISPUTES ─────────────────────────────────────────────
+function renderDisputes(){
+  setHTML(`
+    <div style="background:var(--green-light);border:1.5px solid var(--green);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:12px;color:var(--green)">
+      🛡️ <strong>Nexus dispute resolution is evidence-based, not force-based.</strong> Your digital agreement is the source of truth. No goons. No pressure.
+    </div>
+    <div class="card" style="border-color:var(--orange);margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+        <div><div style="font-weight:700;font-size:14px">⚖️ Dispute #001 — Rent Delay</div><div style="font-size:11px;color:var(--muted)">Tenant: Rahul Gupta · Filed: 28 Feb 2026</div></div>
+        <span class="severity-badge sev-med">OPEN</span>
+      </div>
+      <div style="font-size:13px;margin-bottom:12px">Tenant has not paid February rent (₹4,200). Last WhatsApp: 3 days ago.</div>
+      <div style="background:var(--orange-light);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--orange);margin-bottom:12px">🤖 Nexus AI sent a formal payment reminder on 25 Feb. If unpaid by 5 March, case auto-escalates to legal team.</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm btn-primary" onclick="toast('Nexus mediation team notified','success')">Request Mediation</button>
+        <button class="btn btn-sm btn-secondary">View Agreement</button>
+        <button class="btn btn-sm btn-green" onclick="toast('Dispute resolved','success')">Mark Resolved</button>
+      </div>
+    </div>
+    <div class="card" style="border-color:var(--green)">
+      <div style="display:flex;justify-content:space-between;align-items:start">
+        <div><div style="font-weight:700;font-size:14px">⚖️ Dispute #000 — Deposit Refund</div><div style="font-size:11px;color:var(--muted)">Ex-tenant: Deepak Joshi · Filed: 15 Jan 2026</div></div>
+        <span class="severity-badge sev-low">RESOLVED</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px">Deposit refunded in 7 days per agreement terms. ✓</div>
+    </div>`);
+}
+
+// ─── COLLEGE SCREENS ─────────────────────────────────────────────
+
+
+
+function renderAnalytics(){
+  setHTML(`
+    <div class="stats-grid">
+      <div class="stat-card sc-bl"><div class="stat-icon">👥</div><div class="stat-num">247</div><div class="stat-label">Total in pool</div></div>
+      <div class="stat-card sc-gr"><div class="stat-icon">✉️</div><div class="stat-num">67%</div><div class="stat-label">Invite acceptance</div><div class="stat-ch">↑ 8% vs last year</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">🏛️</div><div class="stat-num">34%</div><div class="stat-label">Visit → enroll rate</div></div>
+      <div class="stat-card sc-pu"><div class="stat-icon">💰</div><div class="stat-num">₹0</div><div class="stat-label">Agent fees spent</div><div class="stat-ch">Saved ₹45,000</div></div>
+    </div>
+    <div class="card"><div class="card-title">📊 MBA Funnel — 2026</div>
+      ${[['Matched',247,100],['Invited',18,7.3],['Accepted',12,4.9],['Visited',5,2],['Enrolled',4,1.6]].map(([l,n,p])=>`
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px">${l}</span><span style="font-family:'Syne';font-weight:800;color:var(--blue)">${n} <span style="font-size:10px;font-weight:400;color:var(--muted)">(${p}%)</span></span></div>
+          <div class="match-bar"><div class="match-fill" style="width:${p*8}%"></div></div>
+        </div>`).join('')}
+    </div>`);
+}
+
+// ─── STUDENT: COLLEGE MATCHES ─────────────────────────────────────
+
+
+// ─── MY BOOKINGS ─────────────────────────────────────────────────
+function renderMyBookings(){
+  setHTML(`
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">📋 Active Bookings</div>
+      <div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">No bookings yet</div><div class="empty-sub">Browse and book a PG — digital agreement generated instantly</div><button class="btn btn-primary" onclick="gotoScreen('find-pg')">Find a PG →</button></div>
+    </div>
+    <div class="card"><div class="card-title">📝 How Booking Works</div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot tl-green"></div><div class="tl-title">Browse & Select</div><div class="tl-sub">Find a verified PG that matches your needs and budget</div></div>
+        <div class="tl-item"><div class="tl-dot tl-blue"></div><div class="tl-title">Pay ₹500 Token</div><div class="tl-sub">Secures your bed — 100% refundable if owner cancels</div></div>
+        <div class="tl-item"><div class="tl-dot tl-orange"></div><div class="tl-title">Sign Digital Agreement</div><div class="tl-sub">Clear terms signed by both parties — stored permanently</div></div>
+        <div class="tl-item"><div class="tl-dot tl-green"></div><div class="tl-title">Move In</div><div class="tl-sub">You're protected by Nexus for your entire stay. 0 dalals involved.</div></div>
+      </div>
+    </div>`);
+}
+
+// ─── MY AI AGENT ─────────────────────────────────────────────────
+function renderMyAgent(){
+  setHTML(`
+    <div style="background:linear-gradient(135deg,var(--ink),#1a2040);border-radius:var(--r);padding:20px;color:#fff;display:flex;gap:20px;align-items:center;margin-bottom:20px">
+      <div style="flex:1"><div style="font-size:16px;font-weight:700;margin-bottom:4px">🤖 Your Personal AI Agent</div><div style="font-size:12px;color:rgba(255,255,255,0.5)">Working 24/7 on your behalf — even when you're offline</div></div>
+      <div style="font-family:'Syne';font-size:42px;font-weight:800;color:#4ECA8B">ON</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="card">
+        <div class="card-title">⚙️ Agent Preferences</div>
+        <div class="fg" style="margin-bottom:10px"><label class="fl">Preferred Area</label><select class="fi"><option>${CU.area_pref||'Vijay Nagar'}</option><option>AB Road</option><option>Scheme 54</option><option>Super Corridor</option></select></div>
+        <div class="fg" style="margin-bottom:10px"><label class="fl">Max Budget (₹/month)</label><input class="fi" type="number" value="${CU.budget||5000}"></div>
+        <div class="fg" style="margin-bottom:14px"><label class="fl">PG Type</label><select class="fi"><option>${CU.role==='professional'?'Professional':'Boys'}</option><option>Girls</option><option>Both</option></select></div>
+        <button class="btn btn-primary btn-full" onclick="toast('Preferences saved! Agent will use these tonight.','success')">Save Preferences</button>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 What Your Agent Does</div>
+        ${[['🏠','Price monitor','Checks if your shortlisted PGs are fairly priced'],['🎓','College match','Updates match scores as new data arrives'],['📚','Book alerts','Notifies when wishlist books become available'],['🛡️','Safety watch','Monitors area safety and alerts you instantly'],['💰','Negotiation','Sends counter-offers for college admissions']].map(([i,t,s])=>`<div style="display:flex;gap:10px;margin-bottom:10px;align-items:start"><span style="font-size:16px">${i}</span><div><div style="font-size:12px;font-weight:600">${t}</div><div style="font-size:10px;color:var(--muted)">${s}</div></div></div>`).join('')}
+      </div>
+    </div>
+    <div class="card"><div class="card-title">📋 Recent Agent Activity</div>
+      <div class="timeline">
+        ${DATA.logs.slice(0,6).map(l=>`<div class="tl-item"><div class="tl-dot tl-${l.status==='success'?'green':l.status==='error'?'red':'orange'}"></div><div class="tl-title">${l.agent||'AI Agent'} — ${l.action||'action'}</div><div class="tl-sub">${l.details||''}</div></div>`).join('')}
+      </div>
+    </div>`);
+}
+
+// ─── EARNINGS ────────────────────────────────────────────────────
+function renderEarnings(){
+  setHTML(`
+    <div class="stats-grid">
+      <div class="stat-card sc-gr"><div class="stat-icon">💰</div><div class="stat-num">₹12,600</div><div class="stat-label">Rent collected (Mar)</div></div>
+      <div class="stat-card sc-bl"><div class="stat-icon">🏠</div><div class="stat-num">3</div><div class="stat-label">Active tenants</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">⏳</div><div class="stat-num">₹4,200</div><div class="stat-label">Pending (1 tenant)</div></div>
+      <div class="stat-card sc-pu"><div class="stat-icon">📉</div><div class="stat-num">₹0</div><div class="stat-label">Dalal fees paid</div><div class="stat-ch">Saved ₹6,000+ this year</div></div>
+    </div>
+    <div class="card"><div class="card-title">📊 March 2026 Breakdown</div>
+      ${[['Amit Kumar','PAID','sev-low','₹4,200'],['Vikas Sharma','PENDING','sev-high','₹4,200'],['Deepak Joshi (ended)','ENDED','sev-med','—']].map(([t,s,c,v])=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:13px;font-weight:600">${t}</span>
+          <div style="display:flex;gap:10px;align-items:center"><span class="severity-badge ${c}">${s}</span><span style="font-family:'Syne';font-weight:800">${v}</span></div>
+        </div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:14px 0;font-weight:700">
+        <span>Total Received</span><span style="color:var(--green);font-family:'Syne';font-size:18px">₹8,400</span>
+      </div>
+    </div>`);
+}
+
+// ─── INQUIRIES ───────────────────────────────────────────────────
+function renderInquiries(){
+  setHTML(`<div class="card"><div class="card-title">💬 Student Inquiries</div>
+    ${[{n:'Priya Sharma',c:'DAVV',m:'Is it available from April 1st?',t:'2 hours ago',pg:'Sunrise PG'},
+       {n:'Rahul Gupta',c:'IIM Indore',m:'Can I get a video tour this weekend?',t:'5 hours ago',pg:'Green Villa'},
+       {n:'Anjali Singh',c:'Medicaps',m:'Is food included in the rent?',t:'Yesterday',pg:'Sunrise PG'}].map(i=>`
+      <div style="display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);align-items:start">
+        <div class="user-ava" style="background:var(--blue);width:38px;height:38px;font-size:12px">${i.n.split(' ').map(w=>w[0]).join('')}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px">${i.n} <span style="font-weight:400;color:var(--muted)">· ${i.c}</span></div>
+          <div style="font-size:12px;margin:3px 0">"${i.m}"</div>
+          <div style="font-size:10px;color:var(--muted)">${i.pg} · ${i.t}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <button class="btn btn-sm btn-primary" onclick="toast('WhatsApp opened','success')">💬 Reply</button>
+          <button class="btn btn-sm btn-green" onclick="openAgreementModal('${i.n}')">📝 Agreement</button>
+        </div>
+      </div>`).join('')}
+  </div>`);
+}
+
+// ─── SAFETY ──────────────────────────────────────────────────────
+function renderSafety(){
+  setHTML(`
+    <div style="background:linear-gradient(135deg,var(--ink),#1a2040);border-radius:var(--r);padding:20px;color:#fff;display:flex;gap:20px;align-items:center;margin-bottom:20px">
+      <div style="flex:1"><div style="font-size:16px;font-weight:700;margin-bottom:4px">🛡️ Nexus Safety System</div><div style="font-size:12px;color:rgba(255,255,255,0.5)">AI monitors all activity 24/7. Every user is protected.</div></div>
+      <div style="font-family:'Syne';font-size:42px;font-weight:800;color:#4ECA8B">✅</div>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-title">🚨 Safety Alerts</div>
+          ${sampleAlerts().map(a=>`
+            <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:start">
+              <div style="width:36px;height:36px;border-radius:10px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${a.icon}</div>
+              <div style="flex:1"><div style="font-weight:700;font-size:12px">${a.title}</div><div style="font-size:11px;color:var(--muted)">${a.sub}</div></div>
+              <span class="severity-badge sev-${a.sev}">${a.sev.toUpperCase()}</span>
+            </div>`).join('')}
+        </div>
+        <div class="card">
+          <div class="card-title">🚨 Report an Issue</div>
+          <div class="fg" style="margin-bottom:10px"><label class="fl">Issue Type</label><select class="fi"><option>Unsafe PG condition</option><option>Harassment</option><option>Fraud / Scam</option><option>Rent dispute</option><option>Goon / Threat</option><option>Other</option></select></div>
+          <div class="fg" style="margin-bottom:14px"><label class="fl">Details</label><textarea class="fi" placeholder="Describe what happened with date and location..."></textarea></div>
+          <button class="btn btn-red btn-full" onclick="toast('Report submitted. Nexus team will respond within 2 hours.','success')">🚨 Submit Report</button>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-title">📞 Emergency Contacts</div>
+          ${[['Police','100'],['Women Helpline','1091'],['Student Helpline','14417'],['Nexus Support','1800-NEXUS-1'],['Legal Aid','15100']].map(([n,num])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>${n}</span><strong style="color:var(--blue)">${num}</strong></div>`).join('')}
+        </div>
+        <div class="card" style="background:var(--green-light);border-color:var(--green)">
+          <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px">🤖 AI Safety Monitoring</div>
+          <div style="font-size:11px;color:var(--muted)">Nexus AI scans all listings and user activity for fraud, harassment and goon-pattern behaviour. Automatic alerts sent to admin.</div>
+        </div>
+      </div>
+    </div>`);
+}
+
+// ─── ADMIN SCREENS ───────────────────────────────────────────────
+function renderAllListings(){
+  setHTML(`
+    <div class="filter-bar">
+      <input class="fi-search" placeholder="Search listings...">
+      <select class="filter-select"><option>All Status</option><option>Active</option><option>Flagged</option><option>Paused</option></select>
+      <select class="filter-select"><option>All AI Verdict</option><option>Fair</option><option>Overpriced</option><option>Underpriced</option></select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+    ${DATA.pgs.map(pg=>`
+      <div class="card" style="display:flex;gap:12px;align-items:center">
+        <div class="pg-img ${pg.type||'boys'}" style="width:54px;height:54px;border-radius:10px;min-width:54px;font-size:20px">${pg.emoji||'🏠'}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px">${pg.name||'PG'}</div>
+          <div style="font-size:11px;color:var(--muted)">${pg.area||'Indore'} · ₹${pg.rent||0}/mo · ${pg.type||'boys'}</div>
+          <div style="display:flex;gap:5px;margin-top:5px">
+            <span class="severity-badge ${(pg.fraud_score||0)<40?'sev-low':(pg.fraud_score||0)<70?'sev-med':'sev-high'}">Fraud: ${pg.fraud_score||0}/100</span>
+            <span class="severity-badge ${pg.ai_verdict==='overpriced'?'sev-high':pg.ai_verdict==='underpriced'?'sev-blue':'sev-low'}">${(pg.ai_verdict||'unanalyzed').toUpperCase()}</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-green" onclick="toast('Listing approved','success')">✓ Approve</button>
+        <button class="btn btn-sm btn-red" onclick="toast('Listing removed')">✕ Remove</button>
+      </div>`).join('')}
+    </div>`);
+}
+
+function renderAllUsers(){
+  setHTML(`<div class="card"><div class="card-title">👥 All Users</div>
+    ${Object.values(DEMOS).map(u=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div class="user-ava" style="background:${u.color};width:36px;height:36px;font-size:11px">${u.name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:12px">${u.name}</div><div style="font-size:10px;color:var(--muted)">${u.email} · ${u.role}</div></div>
+        <span class="severity-badge sev-low">ACTIVE</span>
+        <button class="btn btn-sm btn-red" onclick="toast('User suspended')">Suspend</button>
+      </div>`).join('')}
+  </div>`);
+}
+
+function renderFraudAlerts(){
+  setHTML(`
+    <div class="safety-banner"><span style="font-size:22px">🚨</span><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--red)">2 listings require immediate review</div><div style="font-size:12px;color:var(--muted)">AI fraud agent flagged these last night</div></div></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+    ${[{n:'Sky Heights PG',a:'Vijay Nagar',score:78,reason:'Price ₹9,500 is 35% above market average. Description copied from another active listing.',type:'Overpriced + Duplicate content'},
+       {n:'Paradise Living',a:'AB Road',score:65,reason:'Same phone number used on 7 listings this week. Classic broker/dalal pattern.',type:'Broker Pattern Detected'}].map(f=>`
+      <div class="card" style="border-color:var(--red)">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <div><div style="font-weight:700;font-size:14px">🚨 ${f.n}</div><div style="font-size:11px;color:var(--muted)">${f.a} · Type: ${f.type}</div></div>
+          <span class="severity-badge sev-high">SCORE: ${f.score}/100</span>
+        </div>
+        <div style="background:var(--red-light);border-radius:10px;padding:10px;font-size:12px;color:var(--red);margin-bottom:12px">⚠️ ${f.reason}</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm btn-red" onclick="toast('Listing removed and owner warned','success')">🚫 Remove</button>
+          <button class="btn btn-sm btn-orange" onclick="toast('Owner account flagged')">⚠️ Flag Owner</button>
+          <button class="btn btn-sm btn-secondary" onclick="toast('Marked as false positive')">✓ False Positive</button>
+        </div>
+      </div>`).join('')}
+    </div>`);
+}
+
+function renderAgentLogs(){
+  setHTML(`
+    <div class="stats-grid">
+      <div class="stat-card sc-gr"><div class="stat-icon">✅</div><div class="stat-num">${DATA.logs.filter(l=>l.status==='success').length||8}</div><div class="stat-label">Successful runs</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">⚠️</div><div class="stat-num">${DATA.logs.filter(l=>l.status==='warning').length||2}</div><div class="stat-label">Warnings</div></div>
+      <div class="stat-card sc-bl"><div class="stat-icon">🔄</div><div class="stat-num">3</div><div class="stat-label">Active agents</div></div>
+      <div class="stat-card sc-pu"><div class="stat-icon">🕐</div><div class="stat-num">23:30</div><div class="stat-label">Next run (IST)</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Agent Activity Log</div>
+      <div class="timeline">
+      ${DATA.logs.slice(0,10).map(l=>`<div class="tl-item"><div class="tl-dot tl-${l.status==='success'?'green':l.status==='error'?'red':'orange'}"></div><div class="tl-title">${l.agent||'Agent'} — ${l.action||'action'}</div><div class="tl-sub">${l.details||'No details'}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">🤖 Agent Status — Built vs Simulated</div>
+      ${[['Pricing Intelligence Agent','pricing_agent.py','REAL AI — reads Supabase, calls Gemini, writes verdicts','sev-low'],
+         ['Fraud Detection Agent','fraud_agent.py','REAL AI — scans listings, scores 0-100, flags suspicious','sev-low'],
+         ['Vacancy Monitor Agent','vacancy_agent.py','REAL AI — detects stale listings, generates WhatsApp nudges','sev-low'],
+         ['Smart Matching Agent','—','SIMULATED — will use real Gemini matching in Phase 2','sev-med'],
+         ['Relocation Concierge','—','SIMULATED — Agora video tour API integration planned','sev-med'],
+         ['Listing Quality Agent','—','SIMULATED — photo verification & GPS check planned','sev-med']].map(([n,f,d,c])=>`
+        <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:start">
+          <span class="severity-badge ${c}" style="min-width:60px;text-align:center">${c==='sev-low'?'REAL':'DEMO'}</span>
+          <div style="flex:1"><div style="font-weight:700;font-size:12px">${n} ${f!=='—'?`<span style="font-weight:400;color:var(--muted);font-size:10px">(${f})</span>`:''}</div><div style="font-size:11px;color:var(--muted)">${d}</div></div>
+        </div>`).join('')}
+    </div>`);
+}
+
+// ─── COMMISSION SETTINGS (persisted in localStorage) ─────────────
+function getCommissionSettings(){
+  try{ return JSON.parse(localStorage.getItem('nexus_commission')||'{}'); }catch{ return {}; }
+}
+function saveCommissionSettings(s){
+  localStorage.setItem('nexus_commission', JSON.stringify(s));
+}
+
+function renderRevenue(){
+  const cs = getCommissionSettings();
+  const dealCommEnabled = cs.dealComm !== false; // default ON (free mode → show but collect ₹0)
+  const listingFeeEnabled = cs.listingFee === true; // default OFF
+  const collegeFeeEnabled = cs.collegeFee === true; // default OFF
+  const roommateFeeEnabled = cs.roommateFee === true; // default OFF
+
+  // Commission rates
+  const DEAL_FLAT = cs.dealFlat || 500;
+  const DEAL_PCT  = cs.dealPct  || 5;
+  const LISTING_FEE = cs.listingFeeAmt || 299;
+  const COLLEGE_FEE = cs.collegeFeeAmt || 499;
+  const ROOMMATE_FEE = cs.roommateFeeAmt || 99;
+
+  setHTML(`
+    <div style="margin-bottom:18px">
+      <h2 style="font-size:20px;margin-bottom:4px">💰 Revenue & Commission Control</h2>
+      <p style="color:var(--muted);font-size:13px">Toggle revenue streams on/off. Free mode until you're ready — flip the switch when you want to charge.</p>
+    </div>
+
+    <!-- MASTER COMMISSION CONTROL -->
+    <div class="card" style="border:2px solid var(--blue);margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <div style="font-size:32px">🎛️</div>
+        <div style="flex:1">
+          <div style="font-weight:800;font-size:16px;font-family:'Syne'">Commission Master Switch</div>
+          <div style="font-size:12px;color:var(--muted)">Platform is currently in <strong style="color:${dealCommEnabled?'var(--green)':'var(--orange)'}">${dealCommEnabled?'LIVE MODE — collecting commissions':'FREE MODE — no charges to users'}</strong></div>
+        </div>
+      </div>
+
+      <!-- DEAL COMMISSION TOGGLE -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--blue-light);border-radius:12px;margin-bottom:10px">
+        <div>
+          <div style="font-weight:700;font-size:13px">🤝 Deal Commission (Core Revenue)</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">₹${DEAL_FLAT} flat + ${DEAL_PCT}% of agreed rent per successful booking</div>
+          <div style="font-size:11px;color:var(--blue);margin-top:4px">Example: ₹5,000 rent deal → You earn ₹${DEAL_FLAT + Math.round(5000*DEAL_PCT/100)}</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <div onclick="toggleCommission('dealComm',${dealCommEnabled})" style="width:50px;height:26px;border-radius:13px;background:${dealCommEnabled?'var(--green)':'var(--border)'};position:relative;cursor:pointer;transition:.3s">
+            <div style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;${dealCommEnabled?'right:2px':'left:2px'};transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)"></div>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:${dealCommEnabled?'var(--green)':'var(--muted)'}">${dealCommEnabled?'ON':'OFF'}</span>
+        </label>
+      </div>
+
+      <!-- LISTING FEE TOGGLE -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--cream);border-radius:12px;margin-bottom:10px">
+        <div>
+          <div style="font-weight:700;font-size:13px">🏠 PG Owner Premium Listing Fee</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">₹${LISTING_FEE}/month for featured/verified placement</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <div onclick="toggleCommission('listingFee',${listingFeeEnabled})" style="width:50px;height:26px;border-radius:13px;background:${listingFeeEnabled?'var(--green)':'var(--border)'};position:relative;cursor:pointer;transition:.3s">
+            <div style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;${listingFeeEnabled?'right:2px':'left:2px'};transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)"></div>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:${listingFeeEnabled?'var(--green)':'var(--muted)'}">${listingFeeEnabled?'ON':'OFF'}</span>
+        </label>
+      </div>
+
+      <!-- COLLEGE FEE TOGGLE -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--purple-light);border-radius:12px;margin-bottom:10px">
+        <div>
+          <div style="font-weight:700;font-size:13px">🎓 College Listing Fee</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">₹${COLLEGE_FEE}/month per active college listing</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <div onclick="toggleCommission('collegeFee',${collegeFeeEnabled})" style="width:50px;height:26px;border-radius:13px;background:${collegeFeeEnabled?'var(--green)':'var(--border)'};position:relative;cursor:pointer;transition:.3s">
+            <div style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;${collegeFeeEnabled?'right:2px':'left:2px'};transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)"></div>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:${collegeFeeEnabled?'var(--green)':'var(--muted)'}">${collegeFeeEnabled?'ON':'OFF'}</span>
+        </label>
+      </div>
+
+      <!-- ROOMMATE FEE TOGGLE -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--teal-light);border-radius:12px">
+        <div>
+          <div style="font-weight:700;font-size:13px">🏘️ Roommate Matching Premium</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">₹${ROOMMATE_FEE}/month for unlimited roommate matches</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <div onclick="toggleCommission('roommateFee',${roommateFeeEnabled})" style="width:50px;height:26px;border-radius:13px;background:${roommateFeeEnabled?'var(--green)':'var(--border)'};position:relative;cursor:pointer;transition:.3s">
+            <div style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;${roommateFeeEnabled?'right:2px':'left:2px'};transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)"></div>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:${roommateFeeEnabled?'var(--green)':'var(--muted)'}">${roommateFeeEnabled?'ON':'OFF'}</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- REVENUE PROJECTION -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+      <div class="card" style="background:linear-gradient(135deg,var(--green),#0A6B40);color:#fff">
+        <div style="font-size:12px;opacity:.8;margin-bottom:4px">Monthly Projection (10 deals)</div>
+        <div style="font-family:'Syne';font-size:28px;font-weight:800">₹${(10*(DEAL_FLAT+Math.round(5500*DEAL_PCT/100))).toLocaleString()}</div>
+        <div style="font-size:11px;opacity:.7;margin-top:4px">@ avg ₹5,500 rent, 10 deals/mo</div>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,var(--blue),#1535C0);color:#fff">
+        <div style="font-size:12px;opacity:.8;margin-bottom:4px">Monthly Projection (30 deals)</div>
+        <div style="font-family:'Syne';font-size:28px;font-weight:800">₹${(30*(DEAL_FLAT+Math.round(5500*DEAL_PCT/100))).toLocaleString()}</div>
+        <div style="font-size:11px;opacity:.7;margin-top:4px">@ avg ₹5,500 rent, 30 deals/mo</div>
+      </div>
+    </div>
+
+    <!-- REVENUE BREAKDOWN -->
+    <div class="card"><div class="card-title">💰 Revenue Breakdown — Current Month</div>
+      ${[
+        ['Deal Commissions (AI Negotiation)',dealCommEnabled?'ACTIVE':'FREE MODE','var(--green)'],
+        ['PG Owner Premium Listings',listingFeeEnabled?'ACTIVE':'OFF','var(--orange)'],
+        ['College Listings',collegeFeeEnabled?'ACTIVE':'OFF','var(--orange)'],
+        ['Roommate Matching Premium',roommateFeeEnabled?'ACTIVE':'OFF','var(--orange)'],
+      ].map(([l,s,c])=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:13px">${l}</span>
+          <span style="font-size:11px;font-weight:700;color:${c};background:${c==='var(--green)'?'var(--green-light)':'var(--orange-light)'};padding:3px 10px;border-radius:20px">${s}</span>
+        </div>`).join('')}
+      <div style="padding:12px 0;font-size:12px;color:var(--muted)">
+        💡 Tip: Start with Deal Commission only. Once you have 20+ users, enable Premium Listings and College fees.
+      </div>
+    </div>
+
+    <!-- UPI SETUP -->
+    <div class="card" style="margin-top:14px;border:1.5px dashed var(--green)">
+      <div class="card-title">📲 How to Collect Commission (No Code Needed)</div>
+      <div style="font-size:13px;line-height:1.8;color:var(--muted)">
+        <strong style="color:var(--ink)">Step 1 — Free (start now):</strong> When AI confirms a deal, WhatsApp the tenant your UPI ID to collect commission manually.<br>
+        <strong style="color:var(--ink)">Step 2 — Scale:</strong> Register at <a href="https://razorpay.com" target="_blank" style="color:var(--blue)">razorpay.com</a> (free, instant) → Add payment link in confirmation message.<br>
+        <strong style="color:var(--ink)">Step 3 — Automate:</strong> Add Razorpay keys to GitHub Secrets → commission auto-collected on deal acceptance.
+      </div>
+    </div>
+  `);
+}
+
+function toggleCommission(key, currentValue){
+  const cs = getCommissionSettings();
+  cs[key] = !currentValue;
+  saveCommissionSettings(cs);
+  const label = {dealComm:'Deal Commission',listingFee:'Listing Fee',collegeFee:'College Fee',roommateFee:'Roommate Fee'}[key]||key;
+  toast(`${label} turned ${!currentValue?'ON ✅':'OFF'}`, !currentValue?'success':'');
+  renderRevenue();
+}
+
+// ─── MODALS ───────────────────────────────────────────────────────
+function openPGModal(encoded){
+  let pg;try{pg=JSON.parse(decodeURIComponent(encoded));}catch{return;}
+  document.getElementById('modal-pg-body').innerHTML=`
+    <div class="modal-title">${pg.name||'PG Details'}</div>
+    <div class="modal-sub">${pg.area||''} · ${(pg.type||'boys').toUpperCase()} PG · ₹${(pg.rent||0).toLocaleString()}/month</div>
+    <div class="agr-box">
+      <div class="agr-row"><span>Beds Available</span><strong>${pg.beds||'?'}</strong></div>
+      <div class="agr-row"><span>Room Type</span><strong>${pg.room_type||'Double Sharing'}</strong></div>
+      <div class="agr-row"><span>Food</span><strong>${pg.food||'Self-Cook'}</strong></div>
+      <div class="agr-row"><span>AI Price Verdict</span><strong style="color:${pg.ai_verdict==='overpriced'?'var(--orange)':'var(--green)'}">${(pg.ai_verdict||'Not analyzed yet').toUpperCase()}</strong></div>
+      <div class="agr-row"><span>AI Suggested Price</span><strong>₹${pg.ai_suggested_price||pg.rent||0}/month</strong></div>
+      <div class="agr-row"><span>Fraud Score</span><strong style="color:${(pg.fraud_score||0)>60?'var(--red)':'var(--green)'}">${pg.fraud_score||0}/100 ${(pg.fraud_score||0)<40?'(Clean)':'(Review)'}</strong></div>
+      <div class="agr-row"><span>Facilities</span><strong>${(pg.facilities||[]).join(', ')||'Not listed'}</strong></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" onclick="closeModal('modal-pg');openAgreementModal('${(pg.name||'this PG').replace(/'/g,"\\'")}')">📝 Book & Sign Agreement</button>
+      <button class="btn btn-secondary" onclick="toast('WhatsApp contact opened!','success')">💬 Contact Owner</button>
+      <button class="btn btn-secondary" onclick="toast('Saved to shortlist ❤️','success')">♡ Save</button>
+    </div>`;
+  openModal('modal-pg');
+}
+
+function openAgreementModal(tenant){
+  document.getElementById('modal-agreement-body').innerHTML=`
+    <div class="modal-title">📝 Digital Rental Agreement</div>
+    <div class="modal-sub">AI-generated · Both parties sign digitally · Stored permanently on Nexus</div>
+    <div class="agr-box">
+      <div class="agr-row"><span>Tenant</span><strong>${tenant}</strong></div>
+      <div class="agr-row"><span>Owner</span><strong>${CU.role==='owner'?CU.name:'Ramesh Patel'}</strong></div>
+      <div class="agr-row"><span>Monthly Rent</span><strong>₹4,200</strong></div>
+      <div class="agr-row"><span>Security Deposit</span><strong>₹8,400 (2 months — refundable)</strong></div>
+      <div class="agr-row"><span>Notice Period</span><strong>30 days by either party</strong></div>
+      <div class="agr-row"><span>Owner Entry</span><strong>24 hrs advance notice required</strong></div>
+      <div class="agr-row"><span>Dispute Resolution</span><strong>Via Nexus platform only — no goons</strong></div>
+      <div class="agr-row"><span>Eviction</span><strong>Legal process only — police if required</strong></div>
+    </div>
+    <div style="background:var(--green-light);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--green);margin-bottom:14px">
+      🛡️ This agreement is permanently stored. Any violation — by owner or tenant — can be reported to Nexus for immediate action. Physical threats or goon behaviour is reported directly to police.
+    </div>
+    <button class="btn btn-green btn-full" onclick="toast('Agreement signed! Both parties notified via WhatsApp.','success');closeModal('modal-agreement')">✍️ Sign with Aadhaar OTP →</button>`;
+  openModal('modal-agreement');
+}
+
+function openDisputeModal(name){
+  document.getElementById('modal-dispute-body').innerHTML=`
+    <div class="modal-title">⚖️ Raise a Dispute</div>
+    <div class="modal-sub">Nexus mediates fairly — evidence-based, not force-based</div>
+    <div class="fg" style="margin-bottom:10px"><label class="fl">Dispute Type</label><select class="fi"><option>Rent Not Paid</option><option>Deposit Not Refunded</option><option>Property Damage</option><option>Harassment / Threats</option><option>Goon Activity</option><option>Other</option></select></div>
+    <div class="fg" style="margin-bottom:10px"><label class="fl">Against</label><input class="fi" value="${name}" readonly></div>
+    <div class="fg" style="margin-bottom:14px"><label class="fl">Evidence / Description</label><textarea class="fi" placeholder="Describe what happened with dates, amounts and facts..."></textarea></div>
+    <div style="background:var(--blue-light);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--blue);margin-bottom:14px">🤖 Nexus AI will review your case, check the digital agreement, and send a formal notice within 2 hours. If unresolved in 7 days it auto-escalates to our legal team.</div>
+    <button class="btn btn-primary btn-full" onclick="toast('Dispute filed. Nexus team responds within 2 hours.','success');closeModal('modal-dispute')">Submit Dispute →</button>`;
+  openModal('modal-dispute');
+}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ─── STUDENT CARDS ────────────────────────────────────────────────
+function miniStudentCard(s){
+  return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+    <div class="user-ava" style="background:${s.color};width:38px;height:38px;font-size:12px">${s.ini}</div>
+    <div style="flex:1"><div style="font-weight:700;font-size:13px">${s.name}</div><div style="font-size:11px;color:var(--muted)">${s.course} · Match: ${s.score}%</div></div>
+    <button class="btn btn-sm btn-green" onclick="toast('Campus invite sent to ${s.name}!','success')">✉️ Invite</button>
+  </div>`;
+}
+
+function fullStudentCard(s){
+  return `<div class="student-card">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+      <div class="user-ava" style="background:${s.color};width:46px;height:46px;font-size:15px">${s.ini}</div>
+      <div><div style="font-weight:700;font-size:14px">${s.name}</div><div style="font-size:11px;color:var(--muted)">${s.college}</div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:var(--muted)">AI Match Score</span><span style="font-weight:700;color:var(--green)">${s.score}%</span></div>
+    <div class="match-bar"><div class="match-fill" style="width:${s.score}%"></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0;font-size:11px">
+      <div><div style="color:var(--muted)">Interested in</div><div style="font-weight:600">${s.interest}</div></div>
+      <div><div style="color:var(--muted)">Location</div><div style="font-weight:600">${s.loc}</div></div>
+      <div><div style="color:var(--muted)">Budget</div><div style="font-weight:600">${s.budget}</div></div>
+      <div><div style="color:var(--muted)">Year</div><div style="font-weight:600">${s.year}</div></div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-sm btn-green" style="flex:1" onclick="toast('Visit invite sent to ${s.name}!','success')">✉️ Invite</button>
+      <button class="btn btn-sm btn-purple" style="flex:1" onclick="toast('Admission offer sent','success')">🎓 Offer</button>
+    </div>
+  </div>`;
+}
+
+// ─── SAMPLE DATA ──────────────────────────────────────────────────
+function samplePGs(){
+  return [
+    {id:'p1',name:'Sunrise Boys PG',type:'boys',area:'Vijay Nagar',rent:4200,beds:3,room_type:'Double Sharing',facilities:['Wi-Fi','Mess/Food','CCTV','Laundry'],food:'Veg Only',emoji:'🌅',verified:true,ai_verdict:'fair',ai_suggested_price:4200,fraud_score:5,fraud_verdict:'clean',college:'DAVV,IIM Indore'},
+    {id:'p2',name:'Girls Paradise PG',type:'girls',area:'Scheme 54',rent:5500,beds:2,room_type:'Single',facilities:['Wi-Fi','AC','Attached Bath','Geyser','CCTV'],food:'Veg Only',emoji:'🌸',verified:true,ai_verdict:'fair',ai_suggested_price:5500,fraud_score:3,fraud_verdict:'clean',college:'Medicaps'},
+    {id:'p3',name:'Green Valley Co-living',type:'both',area:'Super Corridor',rent:7800,beds:5,room_type:'Single',facilities:['Wi-Fi','AC','Gym','Study Room'],food:'Non-Veg Available',emoji:'🌿',verified:false,ai_verdict:'overpriced',ai_suggested_price:6800,fraud_score:15,fraud_verdict:'clean',college:'IIM Indore'},
+    {id:'p4',name:'Budget PG MR-10',type:'boys',area:'MR-10',rent:2800,beds:8,room_type:'Triple Sharing',facilities:['Wi-Fi','Parking'],food:'Self-Cook',emoji:'🏠',verified:false,ai_verdict:'underpriced',ai_suggested_price:3200,fraud_score:8,fraud_verdict:'clean',college:'DAVV'},
+    {id:'p5',name:'AB Road Executive PG',type:'professional',area:'AB Road',rent:8500,beds:4,room_type:'Single',facilities:['Wi-Fi','AC','Laundry','CCTV','Geyser','Fridge'],food:'Self-Cook',emoji:'🏢',verified:true,ai_verdict:'fair',ai_suggested_price:8500,fraud_score:2,fraud_verdict:'clean',college:'TCS,Infosys offices nearby'},
+    {id:'p6',name:'Bhawarkuan Classic',type:'boys',area:'Bhawarkuan',rent:3800,beds:6,room_type:'Double Sharing',facilities:['Wi-Fi','Mess/Food','Parking'],food:'Non-Veg Available',emoji:'🏡',verified:false,ai_verdict:'fair',ai_suggested_price:3800,fraud_score:12,fraud_verdict:'clean',college:'SGSITS,Medicaps'},
+  ];
+}
+
+function sampleBooks(){
+  return [
+    {id:'b1',title:'Operating Systems',author:'Silberschatz',subject:'eng',condition:'Like New',mrp:680,price:280,edition:'10th',emoji:'💻',seller_type:'student',delivery:'Meetup'},
+    {id:'b2',title:'Financial Accounting',author:'Maheshwari',subject:'com',condition:'Good',mrp:450,price:150,edition:'2024',emoji:'📊',seller_type:'student',delivery:'Both'},
+    {id:'b3',title:'Anatomy & Physiology',author:'Ross & Wilson',subject:'med',condition:'Fair',mrp:1200,price:400,edition:'13th',emoji:'🫀',seller_type:'student',delivery:'Meetup'},
+    {id:'b4',title:'Contract Law',author:'Anson',subject:'law',condition:'Like New',mrp:890,price:350,edition:'30th',emoji:'⚖️',seller_type:'vendor',delivery:'Delivery'},
+    {id:'b5',title:'Data Structures',author:'Cormen',subject:'eng',condition:'Good',mrp:999,price:380,edition:'4th',emoji:'🌲',seller_type:'student',delivery:'Meetup'},
+    {id:'b6',title:'Principles of Marketing',author:'Kotler',subject:'mgmt',condition:'Like New',mrp:750,price:280,edition:'17th',emoji:'📈',seller_type:'student',delivery:'Both'},
+  ];
+}
+
+function sampleStudents(){
+  return [
+    {name:'Priya Sharma',ini:'PS',college:'St. Raphael HS School',course:'B.Tech Applicant',interest:'CSE / AI',loc:'Indore',budget:'₹2-4L/yr',year:'Class 12',score:92,color:'#1B3FD8'},
+    {name:'Rahul Gupta',ini:'RG',college:'Daly College',course:'MBA Aspirant',interest:'Finance',loc:'Indore',budget:'₹8-12L/yr',year:'Graduate',score:88,color:'#0A7C4E'},
+    {name:'Anjali Singh',ini:'AS',college:'MYH Hospital (intern)',course:'MBBS Applicant',interest:'Medicine',loc:'Indore',budget:'₹5-8L/yr',year:'Class 12',score:85,color:'#6B35C9'},
+    {name:'Vikram Patel',ini:'VP',college:'SGSITS Indore',course:'M.Tech Applicant',interest:'Mechanical',loc:'Indore',budget:'₹1-3L/yr',year:'B.Tech 4th yr',score:79,color:'#E8A020'},
+  ];
+}
+
+function sampleColleges(){
+  return [
+    {name:'IIM Indore',loc:'Super Corridor',type:'Govt. Premier',course:'MBA (2 yr)',fees:'₹12L',scholarship:'Up to 30%',match:92,rank:7},
+    {name:'DAVV Indore',loc:'Khandwa Road',type:'State University',course:'B.Tech CSE',fees:'₹85,000',scholarship:'Merit-based',match:87,rank:42},
+    {name:'Medicaps University',loc:'AB Road',type:'Private',course:'B.Tech / MBA',fees:'₹1.8L',scholarship:'Up to 25%',match:78,rank:156},
+    {name:'NLIU Bhopal',loc:'Bhopal, MP',type:'Govt. Law',course:'BA LLB (5 yr)',fees:'₹60,000',scholarship:'Merit + Need',match:74,rank:6},
+  ];
+}
+
+function sampleAlerts(){
+  return [
+    {icon:'🚨',title:'Broker pattern detected',sub:'Phone 9876XXXXX on 7 listings in 5 days',bg:'var(--red-light)',sev:'high'},
+    {icon:'⚠️',title:'Stale listing — 45 days',sub:'Sunrise PG vacant 45 days. WhatsApp nudge sent.',bg:'var(--orange-light)',sev:'med'},
+    {icon:'✅',title:'Fraud check complete',sub:'6 listings scanned. 1 flagged, 5 clean.',bg:'var(--green-light)',sev:'low'},
+  ];
+}
+
+function sampleLogs(){
+  return [
+    {agent:'Pricing Agent',action:'Full scan — 6 PGs analyzed',status:'success',details:'4 fair, 1 overpriced, 1 underpriced. 1 flagged for review.'},
+    {agent:'Fraud Agent',action:'Broker pattern detected',status:'warning',details:'Phone used on 7 listings in 5 days. Owner account flagged.'},
+    {agent:'Vacancy Agent',action:'Nudge sent — Sunrise PG',status:'success',details:'45 days stale. Personalised Hinglish WhatsApp message generated.'},
+    {agent:'Pricing Agent',action:'Market rates recalculated',status:'success',details:'Vijay Nagar avg ₹4,400. Super Corridor avg ₹8,200.'},
+    {agent:'Fraud Agent',action:'Price anomaly flagged',status:'warning',details:'Sky Heights PG at ₹9,500 — 35% above Vijay Nagar market rate.'},
+  ];
+}
+
+// ─── LIVE OFFERS BOARD ────────────────────────────────────────────
+function renderLiveOffers(){
+  const sampleOffers=[
+    {id:'o1',pg:'Sunrise Boys PG',area:'Vijay Nagar',original:4200,offered:3500,counter:3900,reason:'Midpoint between Rs.3500 offer and Rs.4200 asking. 3 similar PGs in area at Rs.3800-4100.',expires:'23h 14m',likelihood:'high',emoji:'🌅'},
+    {id:'o2',pg:'Green Valley Co-living',area:'Super Corridor',original:7800,offered:6500,counter:7000,reason:'AI suggests Rs.7000 — listing is overpriced vs market (Rs.6800 suggested). Counter justified.',expires:'11h 52m',likelihood:'high',emoji:'🌿'},
+    {id:'o3',pg:'Bhawarkuan Classic',area:'Bhawarkuan',original:3800,offered:3200,counter:3550,reason:'Offer is 16% below asking. Rs.3550 is fair for double-sharing with food in this area.',expires:'6h 30m',likelihood:'medium',emoji:'🏡'},
+    {id:'o4',pg:'AB Road Executive PG',area:'AB Road',original:8500,offered:7800,counter:8200,reason:'Offer is 8% below asking — very close. Rs.8200 is a fair deal for fully furnished single.',expires:'2h 05m',likelihood:'high',emoji:'🏢'},
+  ];
+  const isOwner = CU.role==='owner';
+
+  setHTML(`
+    <div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(10,124,78,0.2);animation:pulse 1.5s infinite"></div>
+        <h2 style="font-size:20px;font-weight:800;font-family:'Syne'">Nexus Live Deals Board</h2>
+      </div>
+      <p style="color:var(--muted);font-size:13px">AI analyses every enquiry and posts fair counter-offers here in real-time. Offers expire in 24 hours — act fast!</p>
+    </div>
+    <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}</style>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+      <div class="stat-card sc-gr"><div class="stat-icon">⚡</div><div class="stat-num">${sampleOffers.length}</div><div class="stat-label">Active offers</div></div>
+      <div class="stat-card sc-bl"><div class="stat-icon">🤝</div><div class="stat-num">₹${sampleOffers.filter(o=>o.likelihood==='high').length*2}</div><div class="stat-label">Deals closed today</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">💰</div><div class="stat-num">₹4,850</div><div class="stat-label">Commission earned today</div></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+    ${sampleOffers.map(o=>`
+      <div class="card" style="border-left:4px solid ${o.likelihood==='high'?'var(--green)':'var(--orange)'}">
+        <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:12px">
+          <div style="display:flex;gap:10px;align-items:center">
+            <div style="font-size:28px">${o.emoji}</div>
+            <div>
+              <div style="font-weight:800;font-size:14px;font-family:'Syne'">${o.pg}</div>
+              <div style="font-size:11px;color:var(--muted)">${o.area} · <span style="color:${o.likelihood==='high'?'var(--green)':'var(--orange)'};font-weight:700">${o.likelihood==='high'?'HIGH chance of deal':'MEDIUM chance'}</span></div>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:10px;color:var(--muted)">Expires in</div>
+            <div style="font-weight:700;font-size:13px;color:var(--red)">${o.expires}</div>
+          </div>
+        </div>
+
+        <!-- Price negotiation display -->
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:6px;align-items:center;background:var(--cream);border-radius:12px;padding:12px;margin-bottom:12px">
+          <div style="text-align:center">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:2px">Owner asking</div>
+            <div style="font-family:'Syne';font-weight:700;font-size:15px;color:var(--ink)">₹${o.original.toLocaleString()}</div>
+          </div>
+          <div style="color:var(--muted);font-size:18px">↔</div>
+          <div style="text-align:center;background:#fff;border-radius:10px;padding:8px;border:2px solid var(--blue)">
+            <div style="font-size:10px;color:var(--blue);font-weight:700;margin-bottom:2px">🤖 NEXUS DEAL</div>
+            <div style="font-family:'Syne';font-weight:800;font-size:17px;color:var(--blue)">₹${o.counter.toLocaleString()}</div>
+          </div>
+          <div style="color:var(--muted);font-size:18px">↔</div>
+          <div style="text-align:center">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:2px">Tenant offered</div>
+            <div style="font-family:'Syne';font-weight:700;font-size:15px;color:var(--ink)">₹${o.offered.toLocaleString()}</div>
+          </div>
+        </div>
+
+        <div style="font-size:12px;color:var(--muted);background:var(--blue-light);border-radius:8px;padding:8px 12px;margin-bottom:12px">
+          🤖 <em>${o.reason}</em>
+        </div>
+
+        <div style="display:flex;gap:8px">
+          ${isOwner?`
+            <button class="btn btn-green btn-sm" style="flex:1" onclick="toast('Deal accepted at ₹${o.counter}! Tenant notified. 🎉','success')">✅ Accept ₹${o.counter.toLocaleString()}</button>
+            <button class="btn btn-secondary btn-sm" onclick="toast('Counter-offer sent to tenant')">📩 Counter Again</button>
+            <button class="btn btn-secondary btn-sm" onclick="toast('Offer declined')">✕ Decline</button>
+          `:`
+            <button class="btn btn-primary btn-sm" style="flex:1" onclick="toast('Interest sent to owner! AI will notify you of response.','success')">⚡ I'm Interested</button>
+            <button class="btn btn-secondary btn-sm" onclick="toast('Saved to bookmarks ♡','success')">♡ Save</button>
+          `}
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">
+      New offers posted every 6 hours by AI negotiation agent · Connect your Supabase to see real offers
+    </div>
+  `);
+}
+
+// ─── ROOMMATE / BED VACANCY BOARD ────────────────────────────────
+function renderRoommateBoard(){
+  const canPost = CU.role==='student'||CU.role==='professional';
+  const samplePosts=[
+    {id:'r1',title:'Need roommate — Double sharing, Vijay Nagar',poster:'Amit K.',poster_type:'student',area:'Vijay Nagar',pg:'Sunrise Boys PG',current_rent:4200,share_rent:2100,gender:'male',days:3,match:94,emoji:'🌅',desc:'Final year DAVV CSE student. Looking for another student or working professional. Quiet, non-smoker. Food included.'},
+    {id:'r2',title:'Bed available — Single room converted to double',poster:'Priya S.',poster_type:'student',area:'Scheme 54',pg:'Girls Paradise PG',current_rent:5500,share_rent:2800,gender:'female',days:7,match:87,emoji:'🌸',desc:'2nd year Medicaps student. Room is spacious, AC, attached bath. Prefer a girl student. Veg household only.'},
+    {id:'r3',title:'Professional looking for working professional roommate',poster:'Rahul M.',poster_type:'professional',area:'AB Road',pg:'AB Road Executive PG',current_rent:8500,share_rent:4200,gender:'any',days:5,match:81,emoji:'🏢',desc:'Software engineer at TCS. Looking for working professional (any gender). Fully furnished, AC, great location near office hubs.'},
+    {id:'r4',title:'Bed available from April 1st — Super Corridor',poster:'Neha T.',poster_type:'student',area:'Super Corridor',pg:'Green Valley Co-living',current_rent:7800,share_rent:3900,gender:'female',days:1,match:78,emoji:'🌿',desc:'IIM Indore PGP1 student. Looking for another student or working woman. Gym, study room available.'},
+  ];
+
+  setHTML(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <h2 style="font-size:20px;font-weight:800;font-family:'Syne'">Roommate & Bed Vacancy Board</h2>
+        <p style="color:var(--muted);font-size:13px;margin-top:2px">Split rent with a roommate. AI matches you based on area, budget and lifestyle.</p>
+      </div>
+      ${canPost?`<button class="btn btn-primary" onclick="openPostRoommateModal()">+ Post Vacancy</button>`:''}
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+      <div class="stat-card sc-bl"><div class="stat-icon">🏘️</div><div class="stat-num">${samplePosts.length}</div><div class="stat-label">Open vacancies</div></div>
+      <div class="stat-card sc-gr"><div class="stat-icon">🤝</div><div class="stat-num">12</div><div class="stat-label">Matches made this week</div></div>
+      <div class="stat-card sc-or"><div class="stat-icon">💰</div><div class="stat-num">~₹2,000</div><div class="stat-label">Avg monthly savings</div></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+    ${samplePosts.map(p=>`
+      <div class="card">
+        <div style="display:flex;gap:12px;align-items:start">
+          <div style="font-size:28px;flex-shrink:0">${p.emoji}</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+              <div>
+                <div style="font-weight:800;font-size:14px;font-family:'Syne'">${p.title}</div>
+                <div style="font-size:11px;color:var(--muted)">${p.area} · ${p.pg} · Posted ${p.days}d ago</div>
+              </div>
+              <div style="background:var(--green-light);color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap">
+                🤖 ${p.match}% match
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">${p.desc}</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+              <span style="font-size:11px;background:var(--blue-light);color:var(--blue);padding:3px 10px;border-radius:20px;font-weight:600">₹${p.share_rent.toLocaleString()}/month your share</span>
+              <span style="font-size:11px;background:var(--cream);color:var(--muted);padding:3px 10px;border-radius:20px">${p.gender==='any'?'Any gender':(p.gender==='male'?'Male only':'Female only')}</span>
+              <span style="font-size:11px;background:var(--cream);color:var(--muted);padding:3px 10px;border-radius:20px">${p.poster_type==='student'?'🎓 Student':'💼 Professional'}</span>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary btn-sm" onclick="toast('Interest sent to ${p.poster}! They will contact you.','success')">💬 I&apos;m Interested</button>
+              <button class="btn btn-secondary btn-sm" onclick="toast('Saved to bookmarks ♡','success')">♡ Save</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <!-- POST VACANCY MODAL -->
+    <div id="modal-roommate" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+      <div style="background:#fff;border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto">
+        <div style="font-family:'Syne';font-size:18px;font-weight:800;margin-bottom:4px">🏘️ Post Bed Vacancy</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Find a roommate — AI will match compatible profiles automatically</div>
+        <div class="fg"><label class="fl">PG Name / Location</label><input class="fi" placeholder="e.g. Sunrise Boys PG, Vijay Nagar"></div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Your monthly rent total</label><input class="fi" type="number" placeholder="4200"></div>
+          <div class="fg"><label class="fl">Roommate pays</label><input class="fi" type="number" placeholder="2100"></div>
+        </div>
+        <div class="fg"><label class="fl">Gender preference</label>
+          <select class="fi"><option>Any gender welcome</option><option>Male only</option><option>Female only</option></select>
+        </div>
+        <div class="fg"><label class="fl">Area</label>
+          <select class="fi"><option>Vijay Nagar</option><option>AB Road</option><option>Scheme 54</option><option>Super Corridor</option><option>Bhawarkuan</option><option>MR-10</option></select>
+        </div>
+        <div class="fg"><label class="fl">About you & the room</label><textarea class="fi" rows="3" placeholder="Tell potential roommates about yourself and the room..."></textarea></div>
+        <button class="btn-primary-lg" onclick="document.getElementById('modal-roommate').style.display='none';toast('Vacancy posted! AI will match you within 24 hours 🤖','success')">Post Vacancy</button>
+      </div>
+    </div>
+  `);
+}
+
+function openPostRoommateModal(){
+  document.getElementById('modal-roommate').style.display='flex';
+}
+
+
+// ── GPS LOCATION ─────────────────────────────────────────────────
+let USER_LOCATION = null; // {lat, lng, city, area}
+
+function detectLocation() {
+  const btn = document.getElementById('gps-btn');
+  if(btn) { btn.textContent = '📍 Detecting...'; btn.disabled = true; }
+
+  if(!navigator.geolocation) {
+    toast('GPS not supported on this browser', 'error');
+    if(btn) { btn.textContent = '📍 Near Me'; btn.disabled = false; }
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      USER_LOCATION = { lat, lng };
+
+      // Reverse geocode using free OpenStreetMap Nominatim API
+      try {
+        const r = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+          { headers: { 'User-Agent': 'NexusPG/1.0' } }
+        );
+        const data = await r.json();
+        const addr = data.address || {};
+        USER_LOCATION.city = addr.city || addr.town || addr.county || 'Your City';
+        USER_LOCATION.area = addr.suburb || addr.neighbourhood || addr.quarter || '';
+        USER_LOCATION.display = USER_LOCATION.area
+          ? `${USER_LOCATION.area}, ${USER_LOCATION.city}`
+          : USER_LOCATION.city;
+
+        toast(`📍 Location: ${USER_LOCATION.display}`, 'success');
+        const badge = document.getElementById('location-badge');
+        if(badge) badge.textContent = `📍 ${USER_LOCATION.display}`;
+
+        // Auto-fill city filter if it exists
+        const cityInput = document.getElementById('s-city');
+        if(cityInput) cityInput.value = USER_LOCATION.city;
+
+        // Sort PGs by distance from user
+        if(DATA.pgs && DATA.pgs.length) {
+          DATA.pgs = sortByDistance(DATA.pgs, lat, lng);
+        }
+
+        // Re-render with location context
+        if(document.getElementById('pg-results')) filterPGs();
+        if(btn) { btn.textContent = `📍 ${USER_LOCATION.area || USER_LOCATION.city}`; btn.disabled = false; }
+
+      } catch(e) {
+        USER_LOCATION.display = `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
+        toast('Location detected! Sorting PGs by distance...', 'success');
+        if(btn) { btn.textContent = '📍 Located'; btn.disabled = false; }
+      }
+    },
+    (err) => {
+      const msgs = { 1: 'Location permission denied', 2: 'Location unavailable', 3: 'Location timeout' };
+      toast(msgs[err.code] || 'Could not detect location', 'error');
+      if(btn) { btn.textContent = '📍 Near Me'; btn.disabled = false; }
+    },
+    { timeout: 10000, maximumAge: 300000 }
+  );
+}
+
+function haversineDistance(lat1, lng1, lat2, lng2) {
+  // Distance in km between two GPS coordinates
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 +
+            Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+            Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function sortByDistance(pgs, userLat, userLng) {
+  return pgs.map(pg => {
+    if(pg.latitude && pg.longitude) {
+      const dist = haversineDistance(userLat, userLng, pg.latitude, pg.longitude);
+      return { ...pg, _distance_km: dist };
+    }
+    return { ...pg, _distance_km: 999 };
+  }).sort((a, b) => a._distance_km - b._distance_km);
+}
+
+function getDistanceLabel(pg) {
+  if(!pg._distance_km || pg._distance_km === 999) return '';
+  if(pg._distance_km < 1) return `${Math.round(pg._distance_km * 1000)}m away`;
+  return `${pg._distance_km.toFixed(1)}km away`;
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className=`toast toast-${type||'default'} show`;
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    // Hide loading screen
+    const ls=document.getElementById('loading-screen');
+    ls.style.opacity='0';
+    setTimeout(()=>{ls.style.display='none';},500);
+
+    // Try to restore session from localStorage
+    try{
+      const saved=localStorage.getItem('nexus_user');
+      if(saved){
+        const parsed=JSON.parse(saved);
+        // Validate the saved user has required fields
+        if(parsed && parsed.name && parsed.role){
+          CU=parsed;
+          enterApp().catch(()=>{ CU=null; localStorage.removeItem('nexus_user'); showAuth(); });
+        } else {
+          // Bad/stale data — clear it and show auth
+          localStorage.removeItem('nexus_user');
+          showAuth();
+        }
+      } else {
+        showAuth();
+      }
+    } catch(e){
+      localStorage.removeItem('nexus_user');
+      showAuth();
+    }
+  },1500);
+});
+
+function showAuth(){
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('app-screen').style.display='none';
+}
+</script>
+</body>
+</html>

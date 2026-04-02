@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Campus — Indore's Education & Career Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1A3C2E; --forest-mid:#2D5A42; --forest-light:#EAF2ED;
+  --amber:#D4860A; --amber-light:#FEF3DC; --amber-bright:#F5A623;
+  --cream:#F7F3EC; --paper:#FDFBF7; --ink:#1C1C1E;
+  --muted:#6B6860; --border:#E4DDD2; --card:#FFFFFF;
+  --red:#C0392B; --red-light:#FDEDEB;
+  --blue:#1B4F8A; --blue-light:#EBF1F9;
+  --purple:#5B2D8E; --purple-light:#F0EBF9;
+  --teal:#0E6B6B; --teal-light:#E6F4F4;
+  --shadow:0 2px 12px rgba(26,60,46,0.08);
+  --shadow-lg:0 8px 32px rgba(26,60,46,0.14);
+  --r:14px; --rs:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4,.logo{font-family:'Playfair Display',serif}
+
+/* ── LOADING ── */
+#loading-screen{position:fixed;inset:0;background:var(--forest);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .6s}
+.load-wordmark{font-family:'Playfair Display',serif;font-size:48px;font-weight:800;color:#fff;letter-spacing:-1px}
+.load-sub{font-size:12px;color:rgba(255,255,255,0.4);letter-spacing:3px;text-transform:uppercase;margin-top:4px;margin-bottom:32px}
+.load-bar{width:180px;height:2px;background:rgba(255,255,255,0.15);border-radius:2px;overflow:hidden}
+.load-fill{height:100%;background:var(--amber-bright);border-radius:2px;animation:lf 1.6s ease-out forwards}
+@keyframes lf{0%{width:0}100%{width:100%}}
+
+/* ── AUTH ── */
+#auth-screen{display:none;min-height:100vh;flex-direction:row}
+.auth-left{width:46%;background:var(--forest);padding:56px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.auth-left::before{content:'';position:absolute;top:-100px;right:-100px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(212,134,10,0.2),transparent 70%)}
+.auth-left::after{content:'';position:absolute;bottom:-80px;left:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.04),transparent 70%)}
+.auth-wordmark{font-family:'Playfair Display',serif;font-size:42px;font-weight:800;color:#fff;line-height:1}
+.auth-wordmark span{color:var(--amber-bright)}
+.auth-tagline{font-size:15px;color:rgba(255,255,255,0.55);line-height:1.75;margin-top:14px;margin-bottom:36px;max-width:340px}
+.auth-feat{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.auth-feat-dot{width:8px;height:8px;border-radius:50%;background:var(--amber-bright);flex-shrink:0}
+.auth-feat-text{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5}
+.auth-right{width:54%;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--paper)}
+.auth-box{width:100%;max-width:460px}
+
+/* ── TABS ── */
+.auth-tabs{display:flex;background:var(--cream);border-radius:10px;padding:3px;margin-bottom:22px;border:1px solid var(--border)}
+.auth-tab{flex:1;padding:9px;text-align:center;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);border:none;background:transparent;font-family:'Nunito',sans-serif;transition:.2s}
+.auth-tab.active{background:#fff;color:var(--forest);box-shadow:var(--shadow)}
+.auth-form{display:none}.auth-form.active{display:block}
+
+/* ── ROLE SELECTOR ── */
+.role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px}
+.role-opt{border:2px solid var(--border);border-radius:10px;padding:11px 8px;text-align:center;cursor:pointer;transition:.2s;background:#fff}
+.role-opt:hover{border-color:var(--forest-mid);background:var(--forest-light)}
+.role-opt.selected{border-color:var(--forest);background:var(--forest-light)}
+.role-opt-icon{font-size:22px;margin-bottom:4px}
+.role-opt-label{font-size:11px;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:.4px}
+.role-opt-sub{font-size:9px;color:var(--muted);margin-top:2px}
+
+/* ── FORM ── */
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fg2 .fg{margin-bottom:0}
+.fl{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.fi{padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:13px;background:#fff;transition:.2s;outline:none;width:100%;color:var(--ink)}
+.fi:focus{border-color:var(--forest-mid);box-shadow:0 0 0 3px rgba(26,60,46,0.1)}
+select.fi{cursor:pointer}
+.err-msg{background:var(--red-light);color:var(--red);padding:10px 13px;border-radius:8px;font-size:12px;margin-bottom:10px;display:none;border:1px solid rgba(192,57,43,0.15)}
+.success-msg{background:var(--forest-light);color:var(--forest);padding:10px 13px;border-radius:8px;font-size:12px;margin-bottom:10px;display:none;border:1px solid rgba(26,60,46,0.2)}
+.btn-main{width:100%;padding:13px;border-radius:10px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;background:var(--forest);color:#fff;transition:.2s;margin-top:4px;letter-spacing:.3px}
+.btn-main:hover{background:var(--forest-mid);transform:translateY(-1px)}
+
+/* ── APP SHELL ── */
+#app-screen{display:none;min-height:100vh;flex-direction:row}
+.sidebar{width:230px;min-width:230px;background:var(--forest);display:flex;flex-direction:column;min-height:100vh;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.logo-wrap{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.logo{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.logo span{color:var(--amber-bright)}
+.logo-sub{font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.user-pill{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px}
+.user-ava{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+.user-name-sb{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rb{display:inline-block;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+.rb-student{background:rgba(27,79,138,0.35);color:#93B8E8}
+.rb-college{background:rgba(91,45,142,0.35);color:#C4A8E8}
+.rb-company{background:rgba(212,134,10,0.35);color:#F5C87A}
+.rb-alumni{background:rgba(14,107,107,0.35);color:#7DD4D4}
+.rb-admin{background:rgba(192,57,43,0.35);color:#F1A89E}
+nav.nav{flex:1;overflow-y:auto;padding:10px 0}
+.ns{font-size:9px;font-weight:800;color:rgba(255,255,255,0.25);letter-spacing:2px;text-transform:uppercase;padding:14px 18px 5px}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);transition:.15s;border-radius:0;position:relative}
+.ni:hover{background:rgba(255,255,255,0.07);color:#fff}
+.ni.active{background:rgba(212,134,10,0.2);color:#fff;border-right:3px solid var(--amber-bright)}
+.ni-icon{font-size:15px;width:20px;text-align:center}
+.nb{background:var(--amber-bright);color:var(--forest);font-size:8px;font-weight:800;padding:2px 6px;border-radius:10px;margin-left:auto}
+.sb-bottom{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.08)}
+.logout-btn{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.5);font-family:'Nunito',sans-serif;font-size:11px;cursor:pointer;transition:.2s}
+.logout-btn:hover{background:rgba(255,255,255,0.07);color:#fff}
+.main{margin-left:230px;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.page-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--ink)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.content{padding:24px 28px;flex:1;background:var(--cream)}
+
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:var(--r);padding:18px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--border);text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:var(--forest);margin:4px 0}
+.stat-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.stat-icon{font-size:20px;margin-bottom:2px}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-forest{background:var(--forest);color:#fff}.btn-forest:hover{background:var(--forest-mid)}
+.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#B8760A}
+.btn-ghost{background:var(--cream);color:var(--ink);border:1.5px solid var(--border)}.btn-ghost:hover{background:var(--border)}
+.btn-sm{padding:5px 12px;font-size:11px}
+.btn-full{width:100%;justify-content:center}
+
+/* ── TAGS / BADGES ── */
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
+.tag-green{background:var(--forest-light);color:var(--forest)}
+.tag-amber{background:var(--amber-light);color:var(--amber)}
+.tag-blue{background:var(--blue-light);color:var(--blue)}
+.tag-purple{background:var(--purple-light);color:var(--purple)}
+.tag-teal{background:var(--teal-light);color:var(--teal)}
+.tag-red{background:var(--red-light);color:var(--red)}
+
+/* ── POST CARDS ── */
+.post-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;transition:.2s}
+.post-card:hover{border-color:var(--forest-mid);box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.post-card-header{display:flex;align-items:start;gap:12px;margin-bottom:10px}
+.post-org-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;font-weight:800;font-family:'Playfair Display',serif;color:#fff}
+.post-title{font-weight:800;font-size:14px;color:var(--ink);line-height:1.3}
+.post-org{font-size:11px;color:var(--muted);margin-top:2px}
+.post-body{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:12px}
+.post-footer{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;background:#fff;padding:12px;border-radius:10px;border:1px solid var(--border)}
+.filter-select{padding:7px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:'Nunito',sans-serif;font-size:12px;background:#fff;cursor:pointer;outline:none;color:var(--ink)}
+.fi-search{flex:1;min-width:200px;padding:7px 12px;border:1.5px solid var(--border);border-radius:7px;font-family:'Nunito',sans-serif;font-size:12px;outline:none}
+.fi-search:focus{border-color:var(--forest-mid)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-icon{font-size:44px;margin-bottom:12px}
+.empty-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.empty-sub{font-size:13px;line-height:1.6;max-width:320px;margin:0 auto 18px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--forest);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-success{background:var(--forest)}
+.toast-error{background:var(--red)}
+.toast-amber{background:var(--amber)}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,60,46,0.5);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal{background:#fff;border-radius:18px;padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--cream);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
+
+/* ── HERO BANNER ── */
+.hero-banner{background:linear-gradient(135deg,var(--forest),var(--forest-mid));border-radius:14px;padding:24px 28px;color:#fff;margin-bottom:20px;position:relative;overflow:hidden}
+.hero-banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(212,134,10,0.15)}
+.hero-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:4px}
+.hero-sub{font-size:13px;opacity:.7;line-height:1.6}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-left:20px}
+.tl-item{position:relative;padding-bottom:16px;padding-left:16px}
+.tl-item::before{content:'';position:absolute;left:-1px;top:8px;bottom:0;width:1px;background:var(--border)}
+.tl-dot{position:absolute;left:-5px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--forest)}
+.tl-dot-amber{background:var(--amber)}
+.tl-dot-red{background:var(--red)}
+.tl-title{font-size:12px;font-weight:700;color:var(--ink)}
+.tl-sub{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="load-wordmark">Nexus <span style="color:var(--amber-bright)">Campus</span></div>
+  <div class="load-sub">Education & Career Hub · Indore</div>
+  <div class="load-bar"><div class="load-fill"></div></div>
+  <button class="load-reset" onclick="localStorage.removeItem('nexus_campus_user');location.reload()">↺ Clear session</button>
+</div>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-left">
+    <div class="auth-wordmark">Nexus <span>Campus</span></div>
+    <div class="auth-tagline">Indore's dedicated platform for college admissions, campus events, job drives, books and alumni connections.</div>
+    <div class="auth-feat"><div class="auth-feat-dot"></div><div class="auth-feat-text">College admissions with transparent eligibility & fee info</div></div>
+    <div class="auth-feat"><div class="auth-feat-dot"></div><div class="auth-feat-text">Campus recruitment drives from top Indore companies</div></div>
+    <div class="auth-feat"><div class="auth-feat-dot"></div><div class="auth-feat-text">Buy & sell second-hand books — save up to 70%</div></div>
+    <div class="auth-feat"><div class="auth-feat-dot"></div><div class="auth-feat-text">Alumni network for mentorship & referrals</div></div>
+    <div class="auth-feat"><div class="auth-feat-dot"></div><div class="auth-feat-text">Campus events — fests, seminars, open days</div></div>
+    <div style="margin-top:32px;padding:14px;background:rgba(212,134,10,0.15);border-radius:10px;border:1px solid rgba(212,134,10,0.3)">
+      <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px">Also on Nexus</div>
+      <a href="index.html" style="color:var(--amber-bright);font-size:13px;font-weight:700;text-decoration:none">🏠 Nexus PG — Find your perfect paying guest →</a>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="auth-form active" id="form-login">
+        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:800;margin-bottom:4px">Welcome back 👋</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Sign in to your Nexus Campus account</div>
+        <div class="err-msg" id="login-err"></div>
+        <div class="success-msg" id="login-success"></div>
+        <div class="fg"><label class="fl">Email Address</label><input class="fi" type="email" id="login-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <div class="fg">
+          <label class="fl">Password</label>
+          <div style="position:relative">
+            <input class="fi" type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:40px">
+            <span onclick="togglePwd('login-pass')" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:15px">👁</span>
+          </div>
+        </div>
+        <div style="text-align:right;margin-bottom:14px"><span onclick="showForgot()" style="font-size:12px;color:var(--forest);cursor:pointer;text-decoration:underline">Forgot password?</span></div>
+        <button class="btn-main" onclick="doLogin()">Sign In →</button>
+        <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--muted)">New here? <span onclick="switchTab('register')" style="color:var(--forest);cursor:pointer;font-weight:700">Create account →</span></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);text-align:center">
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">Demo Access</div>
+          <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
+            <button onclick="demoLogin('student')" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--cream);cursor:pointer;font-family:'Nunito';font-weight:700">student</button>
+            <button onclick="demoLogin('college')" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--cream);cursor:pointer;font-family:'Nunito';font-weight:700">college</button>
+            <button onclick="demoLogin('company')" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--cream);cursor:pointer;font-family:'Nunito';font-weight:700">company</button>
+            <button onclick="demoLogin('alumni')" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--cream);cursor:pointer;font-family:'Nunito';font-weight:700">alumni</button>
+            <button onclick="demoLogin('admin')" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--cream);cursor:pointer;font-family:'Nunito';font-weight:700">admin</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORGOT PASSWORD -->
+      <div class="auth-form" id="form-forgot">
+        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:800;margin-bottom:4px">Reset Password 🔑</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Enter your registered email to receive reset instructions</div>
+        <div class="err-msg" id="forgot-err"></div>
+        <div class="success-msg" id="forgot-success"></div>
+        <div class="fg"><label class="fl">Registered Email</label><input class="fi" type="email" id="forgot-email" placeholder="you@example.com"></div>
+        <button class="btn-main" onclick="doForgotPwd()">Send Reset Link →</button>
+        <div style="text-align:center;margin-top:12px"><span onclick="showLogin()" style="font-size:12px;color:var(--forest);cursor:pointer">← Back to Sign In</span></div>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="auth-form" id="form-register">
+        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:800;margin-bottom:4px">Join Nexus Campus 🎓</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Select your role to get started</div>
+        <div class="err-msg" id="reg-err"></div>
+        <div class="success-msg" id="reg-success"></div>
+        <div class="role-grid">
+          <div class="role-opt selected" id="ro-student" onclick="selectRole('student')"><div class="role-opt-icon">🎓</div><div class="role-opt-label">Student</div><div class="role-opt-sub">Admissions, books, jobs</div></div>
+          <div class="role-opt" id="ro-college" onclick="selectRole('college')"><div class="role-opt-icon">🏛️</div><div class="role-opt-label">College</div><div class="role-opt-sub">Post admissions & events</div></div>
+          <div class="role-opt" id="ro-company" onclick="selectRole('company')"><div class="role-opt-icon">🏢</div><div class="role-opt-label">Company</div><div class="role-opt-sub">Campus recruitment drives</div></div>
+          <div class="role-opt" id="ro-alumni" onclick="selectRole('alumni')"><div class="role-opt-icon">🤝</div><div class="role-opt-label">Alumni</div><div class="role-opt-sub">Mentor & refer students</div></div>
+        </div>
+        <div class="fg2" style="margin-bottom:10px">
+          <div class="fg"><label class="fl">Full Name</label><input class="fi" id="reg-name" placeholder="Your name"></div>
+          <div class="fg"><label class="fl">Phone</label><input class="fi" id="reg-phone" placeholder="10-digit" maxlength="10"></div>
+        </div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="reg-email" placeholder="you@example.com"></div>
+        <div class="fg"><label class="fl">Password</label><div style="position:relative"><input class="fi" type="password" id="reg-pass" placeholder="Min 6 characters" style="padding-right:40px"><span onclick="togglePwd('reg-pass')" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:15px">👁</span></div></div>
+
+        <!-- Student fields -->
+        <div id="fields-student">
+          <div class="fg2">
+            <div class="fg"><label class="fl">College</label><input class="fi" id="reg-s-college" placeholder="e.g. DAVV, Medicaps"></div>
+            <div class="fg"><label class="fl">Course</label><input class="fi" id="reg-s-course" placeholder="e.g. B.Tech CSE"></div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Year</label><select class="fi" id="reg-s-year"><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>PG / Masters</option></select></div>
+            <div class="fg"><label class="fl">Budget for books (₹)</label><input class="fi" type="number" id="reg-s-budget" placeholder="e.g. 2000"></div>
+          </div>
+        </div>
+        <!-- College fields -->
+        <div id="fields-college" style="display:none">
+          <div class="fg"><label class="fl">Institution Name</label><input class="fi" id="reg-c-name" placeholder="e.g. Medicaps University"></div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Your Designation</label><select class="fi" id="reg-c-designation"><option>Admission Officer</option><option>Director / Principal</option><option>Registrar</option><option>Marketing Head</option><option>Other</option></select></div>
+            <div class="fg"><label class="fl">College Type</label><select class="fi" id="reg-c-type"><option value="engineering">Engineering</option><option value="medical">Medical</option><option value="management">Management</option><option value="arts">Arts & Science</option><option value="law">Law</option><option value="other">Other</option></select></div>
+          </div>
+          <div class="fg"><label class="fl">Area in Indore</label><input class="fi" id="reg-c-area" placeholder="e.g. Super Corridor, AB Road"></div>
+        </div>
+        <!-- Company fields -->
+        <div id="fields-company" style="display:none">
+          <div class="fg"><label class="fl">Company Name</label><input class="fi" id="reg-co-name" placeholder="e.g. TCS, Infosys, Startup Name"></div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Industry</label><select class="fi" id="reg-co-industry"><option>IT / Software</option><option>Manufacturing</option><option>Finance / BFSI</option><option>Healthcare</option><option>E-Commerce</option><option>Other</option></select></div>
+            <div class="fg"><label class="fl">Your Designation</label><input class="fi" id="reg-co-role" placeholder="e.g. HR Manager"></div>
+          </div>
+        </div>
+        <!-- Alumni fields -->
+        <div id="fields-alumni" style="display:none">
+          <div class="fg2">
+            <div class="fg"><label class="fl">Graduated From</label><input class="fi" id="reg-a-college" placeholder="e.g. IIM Indore, DAVV"></div>
+            <div class="fg"><label class="fl">Batch Year</label><input class="fi" type="number" id="reg-a-year" placeholder="e.g. 2019"></div>
+          </div>
+          <div class="fg"><label class="fl">Current Company & Role</label><input class="fi" id="reg-a-company" placeholder="e.g. Google · Product Manager"></div>
+        </div>
+
+        <button class="btn-main" onclick="doRegister()">Create My Account →</button>
+        <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">Already registered? <span onclick="switchTab('login')" style="color:var(--forest);cursor:pointer;font-weight:700">Sign In →</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="app-screen">
+  <div class="sidebar">
+    <div class="logo-wrap">
+      <div class="logo">Nexus <span>Campus</span></div>
+      <div class="logo-sub">Education & Career Hub</div>
+    </div>
+    <div class="user-pill">
+      <div class="user-ava" id="sb-ava">U</div>
+      <div style="overflow:hidden;flex:1">
+        <div class="user-name-sb" id="sb-name">User</div>
+        <div id="sb-role-badge"></div>
+      </div>
+    </div>
+    <nav class="nav" id="main-nav"></nav>
+    <div class="sb-bottom">
+      <button class="logout-btn" onclick="doLogout()">← Sign Out</button>
+      <div style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,0.2)">Supabase connected</div>
+      <div style="text-align:center;margin-top:6px">
+        <a href="index.html" style="font-size:10px;color:rgba(255,255,255,0.35);text-decoration:none">🏠 Switch to Nexus PG</a>
+      </div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title" id="topbar-title">Dashboard</div>
+      <div class="tb-right" id="topbar-actions"></div>
+    </div>
+    <div class="content" id="main-content"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-post"><div class="modal"><button class="modal-close" onclick="closeModal('modal-post')">✕</button><div id="modal-post-body"></div></div></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────
+const SB_URL='https://cvdriqyibnmazwnigfhu.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZHJpcXlpYm5tYXp3bmlnZmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDYxNjMsImV4cCI6MjA4ODEyMjE2M30.lf908MW4yKFT8kylFzARk3Bt_ZlDS80iInfLozIOsYQ';
+const SBH={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+
+// ── STATE ───────────────────────────────────────────────────────────
+let CU=null, REG_ROLE='student';
+
+// ── DEMO ACCOUNTS ───────────────────────────────────────────────────
+const DEMOS={
+  student:{id:'ds-1',name:'Priya Sharma',email:'priya@demo.com',role:'student',college:'DAVV Indore',course:'B.Tech CSE',year:'2nd Year',color:'#1B4F8A'},
+  college:{id:'dc-1',name:'Medicaps University',email:'admissions@medicaps.ac.in',role:'college',institution:'Medicaps University',type:'engineering',area:'AB Road',designation:'Admission Officer',color:'#5B2D8E'},
+  company:{id:'dco-1',name:'TCS Indore',email:'hr@tcs.com',role:'company',company:'TCS',industry:'IT / Software',designation:'HR Manager',color:'#D4860A'},
+  alumni:{id:'da-1',name:'Rahul Gupta',email:'rahul.g@gmail.com',role:'alumni',graduated_from:'IIM Indore',batch_year:2019,current_company:'Google · Product Manager',color:'#0E6B6B'},
+  admin:{id:'da-admin',name:'Nexus Admin',email:'admin@nexus.in',role:'admin',color:'#C0392B'},
+};
+
+// ── SUPABASE ────────────────────────────────────────────────────────
+async function sbGet(t,q=''){try{const r=await fetch(`${SB_URL}/rest/v1/${t}?order=created_at.desc&limit=100${q}`,{headers:SBH});return r.ok?await r.json():[];}catch{return [];}}
+async function sbPost(t,d){try{const r=await fetch(`${SB_URL}/rest/v1/${t}`,{method:'POST',headers:SBH,body:JSON.stringify(d)});const j=await r.json();return Array.isArray(j)?j[0]:j;}catch{return null;}}
+
+// ── AUTH HELPERS ────────────────────────────────────────────────────
+function switchTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',tab==='login'?i===0:i===1));
+  ['form-login','form-forgot','form-register'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('form-'+tab).classList.add('active');
+}
+function showForgot(){
+  ['form-login','form-forgot','form-register'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('form-forgot').classList.add('active');
+}
+function showLogin(){
+  ['form-login','form-forgot','form-register'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('form-login').classList.add('active');
+}
+function togglePwd(id){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';}
+function showErr(el,msg){el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',4500);}
+
+function selectRole(r){
+  REG_ROLE=r;
+  ['student','college','company','alumni'].forEach(x=>{
+    document.getElementById('ro-'+x).classList.toggle('selected',x===r);
+    const f=document.getElementById('fields-'+x);
+    if(f)f.style.display=x===r?'block':'none';
+  });
+}
+
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  const err=document.getElementById('login-err');
+  if(!email||!pass){showErr(err,'Please enter your email and password');return;}
+  const demo=Object.values(DEMOS).find(d=>d.email===email);
+  if(demo&&(pass==='demo'||pass===email)){CU=demo;saveUser();enterApp();return;}
+  const users=await sbGet('campus_users',`&email=eq.${encodeURIComponent(email)}`);
+  if(!users.length){showErr(err,'No account found with this email. Please register.');return;}
+  const user=users.find(u=>u.password===pass);
+  if(user){CU={...user,color:user.color||'#1A3C2E'};saveUser();enterApp();}
+  else showErr(err,'Incorrect password. Try Forgot Password to reset.');
+}
+
+async function doForgotPwd(){
+  const email=document.getElementById('forgot-email').value.trim();
+  const err=document.getElementById('forgot-err');
+  const suc=document.getElementById('forgot-success');
+  if(!email||!email.includes('@')){showErr(err,'Please enter a valid email');return;}
+  const users=await sbGet('campus_users',`&email=eq.${encodeURIComponent(email)}`);
+  if(!users.length){showErr(err,'No account found with this email.');return;}
+  suc.style.display='block';
+  suc.textContent=`Password reset link sent to ${email}. Check your inbox.`;
+  setTimeout(()=>showLogin(),3000);
+}
+
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const phone=document.getElementById('reg-phone').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const pass=document.getElementById('reg-pass').value;
+  const err=document.getElementById('reg-err');
+  const suc=document.getElementById('reg-success');
+  err.style.display='none';
+  if(!name||!email||!pass){showErr(err,'Please fill name, email and password');return;}
+  if(pass.length<6){showErr(err,'Password must be at least 6 characters');return;}
+  if(!email.includes('@')){showErr(err,'Enter a valid email address');return;}
+  const existing=await sbGet('campus_users',`&email=eq.${encodeURIComponent(email)}`);
+  if(existing.length){showErr(err,'This email is already registered. Please sign in.');setTimeout(()=>switchTab('login'),2500);return;}
+  const colors={student:'#1B4F8A',college:'#5B2D8E',company:'#D4860A',alumni:'#0E6B6B',admin:'#C0392B'};
+  const user={name,email,phone,role:REG_ROLE,password:pass,color:colors[REG_ROLE]||'#1A3C2E',created_at:new Date().toISOString(),
+    college_name:REG_ROLE==='student'?(document.getElementById('reg-s-college')||{}).value||'':'',
+    course:REG_ROLE==='student'?(document.getElementById('reg-s-course')||{}).value||'':'',
+    year:REG_ROLE==='student'?(document.getElementById('reg-s-year')||{}).value||'':'',
+    institution:REG_ROLE==='college'?(document.getElementById('reg-c-name')||{}).value||'':'',
+    designation:REG_ROLE==='college'?(document.getElementById('reg-c-designation')||{}).value:
+                REG_ROLE==='company'?(document.getElementById('reg-co-role')||{}).value||'':'',
+    college_type:REG_ROLE==='college'?(document.getElementById('reg-c-type')||{}).value||'':'',
+    area:REG_ROLE==='college'?(document.getElementById('reg-c-area')||{}).value||'':'',
+    company:REG_ROLE==='company'?(document.getElementById('reg-co-name')||{}).value||'':'',
+    industry:REG_ROLE==='company'?(document.getElementById('reg-co-industry')||{}).value||'':'',
+    graduated_from:REG_ROLE==='alumni'?(document.getElementById('reg-a-college')||{}).value||'':'',
+    batch_year:REG_ROLE==='alumni'?parseInt((document.getElementById('reg-a-year')||{}).value||0):null,
+    current_company:REG_ROLE==='alumni'?(document.getElementById('reg-a-company')||{}).value||'':'',
+  };
+  const saved=await sbPost('campus_users',user);
+  CU=saved||{...user,id:'local-'+Date.now()};
+  saveUser();
+  suc.style.display='block';
+  suc.textContent=`Welcome to Nexus Campus, ${name}! 🎉`;
+  setTimeout(()=>enterApp(),1200);
+}
+
+function demoLogin(role){CU=DEMOS[role];saveUser();enterApp();}
+function saveUser(){localStorage.setItem('nexus_campus_user',JSON.stringify(CU));}
+function doLogout(){CU=null;localStorage.removeItem('nexus_campus_user');location.reload();}
+
+// ── APP ENTRY ───────────────────────────────────────────────────────
+async function enterApp(){
+  if(!CU || !CU.name || !CU.role){
+    showAuth();
+    return;
+  }
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app-screen').style.display='flex';
+  try{ updateSidebar(); } catch(e){ console.warn('sidebar err',e); }
+  try{ buildNav(); } catch(e){ console.warn('nav err',e); }
+  gotoScreen('dashboard');
+}
+
+function updateSidebar(){
+  if(!CU)return;
+  const ini=CU.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const ava=document.getElementById('sb-ava');
+  ava.textContent=ini;ava.style.background=CU.color||'#1A3C2E';
+  document.getElementById('sb-name').textContent=CU.name;
+  const rbClass={student:'rb-student',college:'rb-college',company:'rb-company',alumni:'rb-alumni',admin:'rb-admin'};
+  const rbLabel={student:'Student',college:'College',company:'Company',alumni:'Alumni',admin:'Admin'};
+  document.getElementById('sb-role-badge').innerHTML=`<span class="rb ${rbClass[CU.role]||'rb-student'}">${rbLabel[CU.role]||CU.role}</span>`;
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────────────
+const NAV={
+  student:[
+    {s:'dashboard',icon:'📊',label:'Dashboard'},
+    {s:'colleges',icon:'🏛️',label:'Browse Colleges',sec:'DISCOVER'},
+    {s:'events',icon:'📅',label:'Campus Events'},
+    {s:'jobs',icon:'💼',label:'Job Drives'},
+    {s:'books',icon:'📚',label:'Book Marketplace',sec:'MARKETPLACE'},
+    {s:'sell-book',icon:'➕',label:'Sell a Book'},
+    {s:'alumni-connect',icon:'🤝',label:'Alumni Connect',sec:'NETWORK'},
+    {s:'my-applications',icon:'📋',label:'My Applications',sec:'MY STUFF'},
+    {s:'my-profile',icon:'👤',label:'My Profile'},
+  ],
+  college:[
+    {s:'dashboard',icon:'📊',label:'Dashboard'},
+    {s:'post-admission',icon:'🎓',label:'Post Admission',sec:'MANAGE'},
+    {s:'post-event',icon:'📅',label:'Post Event'},
+    {s:'student-pool',icon:'👥',label:'Student Pool'},
+    {s:'my-listings',icon:'📋',label:'My Listings',sec:'ANALYTICS'},
+    {s:'analytics',icon:'📈',label:'Inquiries & Analytics'},
+  ],
+  company:[
+    {s:'dashboard',icon:'📊',label:'Dashboard'},
+    {s:'post-drive',icon:'💼',label:'Post Hiring Drive',sec:'MANAGE'},
+    {s:'talent-pool',icon:'👥',label:'Student Talent Pool'},
+    {s:'my-drives',icon:'📋',label:'My Drives',sec:'TRACK'},
+    {s:'applications-recv',icon:'📩',label:'Applications Received'},
+  ],
+  alumni:[
+    {s:'dashboard',icon:'📊',label:'Dashboard'},
+    {s:'mentor-board',icon:'🤝',label:'Mentorship Board',sec:'GIVE BACK'},
+    {s:'post-opportunity',icon:'💡',label:'Post Opportunity'},
+    {s:'my-mentees',icon:'👤',label:'My Mentees',sec:'MY STUFF'},
+  ],
+  admin:[
+    {s:'dashboard',icon:'📊',label:'Admin Dashboard'},
+    {s:'all-posts',icon:'📋',label:'All Posts',sec:'PLATFORM'},
+    {s:'all-users',icon:'👥',label:'All Users'},
+    {s:'analytics',icon:'📈',label:'Analytics',sec:'INSIGHTS'},
+  ],
+};
+
+const TITLES={
+  dashboard:'Dashboard',colleges:'Browse Colleges',events:'Campus Events',
+  jobs:'Campus Job Drives','books':'Book Marketplace','sell-book':'Sell a Book',
+  'alumni-connect':'Alumni Network','my-applications':'My Applications',
+  'my-profile':'My Profile','post-admission':'Post Admission Info',
+  'post-event':'Post Campus Event','student-pool':'Student Pool',
+  'my-listings':'My Listings','analytics':'Analytics',
+  'post-drive':'Post Hiring Drive','talent-pool':'Student Talent Pool',
+  'my-drives':'My Drives','applications-recv':'Applications Received',
+  'mentor-board':'Mentorship Board','post-opportunity':'Post Opportunity',
+  'my-mentees':'My Mentees','all-posts':'All Posts','all-users':'All Users',
+};
+
+function buildNav(){
+  const items=(NAV[CU.role]||NAV.student);
+  let html='';
+  items.forEach(it=>{
+    if(it.sec)html+=`<div class="ns">${it.sec}</div>`;
+    html+=`<div class="ni" id="nav-${it.s}" onclick="gotoScreen('${it.s}')"><span class="ni-icon">${it.icon}</span>${it.label}${it.badge?`<span class="nb">${it.badge}</span>`:''}</div>`;
+  });
+  document.getElementById('main-nav').innerHTML=html;
+}
+
+function gotoScreen(s){
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const nav=document.getElementById('nav-'+s);
+  if(nav)nav.classList.add('active');
+  document.getElementById('topbar-title').textContent=TITLES[s]||s;
+  const renders={
+    dashboard:renderDashboard,
+    colleges:renderColleges,events:renderEvents,jobs:renderJobs,
+    books:renderBooks,'sell-book':renderSellBook,
+    'alumni-connect':renderAlumniConnect,'my-applications':renderMyApplications,
+    'my-profile':renderMyProfile,
+    'post-admission':renderPostAdmission,'post-event':renderPostEvent,
+    'student-pool':renderStudentPool,'my-listings':renderMyListings,
+    analytics:renderAnalytics,
+    'post-drive':renderPostDrive,'talent-pool':renderTalentPool,
+    'my-drives':renderMyDrives,'applications-recv':renderApplicationsRecv,
+    'mentor-board':renderMentorBoard,'post-opportunity':renderPostOpportunity,
+    'my-mentees':renderMyMentees,
+    'all-posts':renderAllPosts,'all-users':renderAllUsers,
+  };
+  if(renders[s])renders[s]();
+  else setHTML(`<div class="empty"><div class="empty-icon">🚧</div><div class="empty-title">Coming Soon</div><div class="empty-sub">This section is being built.</div></div>`);
+}
+function setHTML(h){document.getElementById('main-content').innerHTML=h;}
+function openModal(id){document.getElementById(id).style.display='flex';}
+function closeModal(id){document.getElementById(id).style.display='none';}
+
+// ── SAMPLE DATA ─────────────────────────────────────────────────────
+const SAMPLE_COLLEGES=[
+  {id:'c1',name:'IIM Indore',type:'Management',area:'Super Corridor',naac:'A++',courses:'MBA, PhD, IPM',fee_range:'₹8L–₹12L/yr',seats:420,deadline:'15 Feb 2026',match:94,logo:'🎓',color:'#1B4F8A',facilities:['Library','Hostel','Sports','Placement Cell'],scholarship:'Up to 30% merit'},
+  {id:'c2',name:'Medicaps University',type:'Engineering / MBA',area:'AB Road',naac:'A',courses:'B.Tech, MBA, BCA',fee_range:'₹1.2L–₹2.4L/yr',seats:960,deadline:'30 Apr 2026',match:87,logo:'🏛️',color:'#5B2D8E',facilities:['Labs','Hostel','Wi-Fi','Gym'],scholarship:'Merit 25% off'},
+  {id:'c3',name:'DAVV Indore',type:'State University',area:'Khandwa Road',naac:'A',courses:'B.Tech, MBA, M.Sc, BA',fee_range:'₹45K–₹85K/yr',seats:3200,deadline:'20 Jun 2026',match:81,logo:'📚',color:'#0E6B6B',facilities:['Library','Hostel','Labs','NCC'],scholarship:'Need + Merit based'},
+  {id:'c4',name:'SGSITS Indore',type:'Engineering',area:'Indore City',naac:'A',courses:'B.E., M.Tech',fee_range:'₹75K–₹1.1L/yr',seats:780,deadline:'15 Jun 2026',match:78,logo:'⚙️',color:'#D4860A',facilities:['Labs','Hostel','Sports','Placement'],scholarship:'Govt. scholarships applicable'},
+];
+
+const SAMPLE_EVENTS=[
+  {id:'e1',title:'Annual Tech Fest — TechStorm 2026',org:'Medicaps University',type:'Technical Fest',date:'Apr 12–14, 2026',reg_deadline:'Apr 10',prize:'₹1.5L total prizes',area:'AB Road Campus',desc:'3-day national level tech fest with hackathon, robotics, coding competitions and industry speaker sessions.',color:'#1B4F8A',logo:'⚡',open:true},
+  {id:'e2',title:'Open Campus Day — MBA Admissions',org:'IIM Indore',type:'Open Day',date:'Mar 28, 2026',reg_deadline:'Mar 25',prize:'Free',area:'Super Corridor',desc:'Get a campus tour, meet faculty, attend a demo lecture and clarify all admission queries in person.',color:'#5B2D8E',logo:'🎓',open:true},
+  {id:'e3',title:'National Case Study Championship',org:'DAVV School of Management',type:'Competition',date:'Apr 5, 2026',reg_deadline:'Apr 1',prize:'₹80,000 prize pool',area:'Khandwa Road',desc:'Inter-college case study competition open to B.Tech, MBA and BCA students. Teams of 3.',color:'#0E6B6B',logo:'📊',open:true},
+  {id:'e4',title:'Startup Founder Speaker Series',org:'Nexus Campus',type:'Seminar',date:'Apr 20, 2026',reg_deadline:'Apr 18',prize:'Free entry',area:'Online + Indore',desc:'5 successful founders from Indore share their startup journeys. Q&A session included. Certificate provided.',color:'#D4860A',logo:'🚀',open:true},
+];
+
+const SAMPLE_JOBS=[
+  {id:'j1',title:'Software Engineer — Campus Hire',company:'TCS Indore',type:'Full Time',ctc:'₹3.5–7 LPA',eligible:'B.Tech / MCA 2025-26',skills:['DSA','Java/Python','SQL'],deadline:'Apr 5, 2026',colleges:['DAVV','Medicaps','SGSITS'],desc:'TCS is conducting campus recruitment for Software Engineer roles. Written test + technical + HR interviews.',logo:'🏢',color:'#1B4F8A',applicants:342},
+  {id:'j2',title:'Finance Analyst Trainee',company:'HDFC Bank',type:'Full Time',ctc:'₹4–6 LPA',eligible:'MBA Finance 2026',skills:['Finance','Excel','Communication'],deadline:'Mar 30, 2026',colleges:['IIM Indore','DAVV'],desc:'HDFC Bank campus recruitment for Finance Analyst Trainee. Group discussion + interview rounds.',logo:'🏦',color:'#0E6B6B',applicants:187},
+  {id:'j3',title:'Summer Internship — Product',company:'Indore Startup Hub',type:'Internship',ctc:'₹15,000/mo',eligible:'Any 2nd/3rd Year',skills:['Curiosity','Communication','Excel'],deadline:'Apr 10, 2026',colleges:['All Indore Colleges'],desc:'3-month summer internship at a fast-growing Indore-based startup. Real product work, mentorship guaranteed.',logo:'🚀',color:'#D4860A',applicants:94},
+  {id:'j4',title:'Data Science Intern',company:'Wipro Technologies',type:'Internship',ctc:'₹12,000/mo',eligible:'B.Tech CSE / IT 2nd-3rd Yr',skills:['Python','ML Basics','Statistics'],deadline:'Apr 15, 2026',colleges:['DAVV','Medicaps','SGSITS'],desc:'Work on real ML projects with Wipro data science team. PPO opportunity for exceptional performers.',logo:'💡',color:'#5B2D8E',applicants:231},
+];
+
+const SAMPLE_BOOKS=[
+  {id:'b1',title:'Operating Systems',author:'Silberschatz',edition:'10th',subject:'Engineering',condition:'Like New',mrp:680,price:260,seller:'Rahul K.',seller_type:'student',delivery:'Meetup (Vijay Nagar)',posted:'2 days ago',emoji:'💻'},
+  {id:'b2',title:'Financial Accounting',author:'Maheshwari & Maheshwari',edition:'2024',subject:'Commerce',condition:'Good',mrp:450,price:140,seller:'Priya S.',seller_type:'student',delivery:'Both',posted:'5 days ago',emoji:'📊'},
+  {id:'b3',title:'Gray\'s Anatomy',author:'Henry Gray',edition:'42nd',subject:'Medical',condition:'Good',mrp:1800,price:650,seller:'Dr. Sharma',seller_type:'alumni',delivery:'Meetup (AB Road)',posted:'1 day ago',emoji:'🫀'},
+  {id:'b4',title:'Contract Law',author:'Anson',edition:'30th',subject:'Law',condition:'Like New',mrp:890,price:320,seller:'Anjali M.',seller_type:'student',delivery:'Delivery available',posted:'3 days ago',emoji:'⚖️'},
+  {id:'b5',title:'Data Structures — CLRS',author:'Cormen et al.',edition:'4th',subject:'Engineering',condition:'Fair',mrp:999,price:340,seller:'Dev P.',seller_type:'student',delivery:'Meetup (DAVV)',posted:'1 week ago',emoji:'🌲'},
+  {id:'b6',title:'Kotler Marketing Management',author:'Philip Kotler',edition:'17th',subject:'Management',condition:'Like New',mrp:750,price:270,seller:'Sneha R.',seller_type:'student',delivery:'Both',posted:'4 days ago',emoji:'📈'},
+];
+
+const SAMPLE_ALUMNI=[
+  {id:'a1',name:'Vikram Malhotra',graduated:'IIM Indore · MBA 2018',company:'McKinsey & Company',role:'Senior Consultant',city:'Mumbai',mentors:'Career strategy, Consulting, MBA prep',available:true,sessions:24,avatar:'VM',color:'#1B4F8A'},
+  {id:'a2',name:'Sneha Agarwal',graduated:'DAVV Indore · B.Tech 2019',company:'Google',role:'Senior Software Engineer',city:'Bangalore',mentors:'Software engineering, FAANG prep, Resume review',available:true,sessions:31,avatar:'SA',color:'#0E6B6B'},
+  {id:'a3',name:'Ravi Tiwari',graduated:'SGSITS · B.E. 2017',company:'Razorpay',role:'Engineering Manager',city:'Bangalore',mentors:'Startups, Engineering leadership, Product thinking',available:false,sessions:18,avatar:'RT',color:'#D4860A'},
+  {id:'a4',name:'Kavita Sharma',graduated:'Medicaps · MBA 2020',company:'HDFC Bank',role:'Assistant VP',city:'Indore',mentors:'Finance careers, BFSI, Interview prep',available:true,sessions:42,avatar:'KS',color:'#5B2D8E'},
+];
+
+// ── DASHBOARD ───────────────────────────────────────────────────────
+function renderDashboard(){
+  const r=CU.role;
+  if(r==='student') renderStudentDashboard();
+  else if(r==='college') renderCollegeDashboard();
+  else if(r==='company') renderCompanyDashboard();
+  else if(r==='alumni') renderAlumniDashboard();
+  else renderAdminDashboard();
+}
+
+function renderStudentDashboard(){
+  setHTML(`
+    <div class="hero-banner">
+      <div style="position:relative;z-index:1">
+        <div class="hero-title">Good morning, ${CU.name.split(' ')[0]} 👋</div>
+        <div class="hero-sub" style="margin-bottom:16px">${CU.college_name||'Nexus Campus'} · ${CU.course||'Student'} · ${CU.year||''}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-amber btn-sm" onclick="gotoScreen('colleges')">🏛️ Browse Colleges</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff" onclick="gotoScreen('jobs')">💼 View Job Drives</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff" onclick="gotoScreen('books')">📚 Buy Books</button>
+        </div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-icon">🏛️</div><div class="stat-num">${SAMPLE_COLLEGES.length}</div><div class="stat-label">Colleges Listed</div></div>
+      <div class="stat-card"><div class="stat-icon">💼</div><div class="stat-num">${SAMPLE_JOBS.length}</div><div class="stat-label">Active Job Drives</div></div>
+      <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-num">${SAMPLE_BOOKS.length}</div><div class="stat-label">Books Available</div></div>
+      <div class="stat-card"><div class="stat-icon">🤝</div><div class="stat-num">${SAMPLE_ALUMNI.filter(a=>a.available).length}</div><div class="stat-label">Mentors Available</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🏛️ Top College Matches <button class="btn btn-ghost btn-sm" onclick="gotoScreen('colleges')">View All →</button></div>
+        ${SAMPLE_COLLEGES.slice(0,3).map(c=>`
+          <div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="width:38px;height:38px;border-radius:9px;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${c.logo}</div>
+            <div style="flex:1"><div style="font-weight:700;font-size:13px">${c.name}</div><div style="font-size:11px;color:var(--muted)">${c.type} · ${c.fee_range}</div></div>
+            <span class="tag tag-green">${c.match}% match</span>
+          </div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="card-title">💼 Upcoming Deadlines</div>
+        ${[...SAMPLE_JOBS.slice(0,2),...SAMPLE_EVENTS.slice(0,2)].map(i=>`
+          <div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+            <div style="font-size:18px">${i.logo||i.emoji||'📋'}</div>
+            <div style="flex:1"><div style="font-weight:700;font-size:12px">${i.title}</div><div style="font-size:11px;color:var(--muted)">${i.company||i.org} · Deadline: ${i.deadline||i.reg_deadline}</div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+  `);
+}
+
+function renderCollegeDashboard(){
+  setHTML(`
+    <div class="hero-banner">
+      <div style="position:relative;z-index:1">
+        <div class="hero-title">${CU.institution||CU.name}</div>
+        <div class="hero-sub" style="margin-bottom:16px">${CU.designation||'College'} · ${CU.area||'Indore'}</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-amber btn-sm" onclick="gotoScreen('post-admission')">🎓 Post Admission</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff" onclick="gotoScreen('post-event')">📅 Post Event</button>
+        </div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-icon">👁️</div><div class="stat-num">1,247</div><div class="stat-label">Profile Views</div></div>
+      <div class="stat-card"><div class="stat-icon">📩</div><div class="stat-num">84</div><div class="stat-label">Student Enquiries</div></div>
+      <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-num">2</div><div class="stat-label">Active Listings</div></div>
+      <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-num">4.2</div><div class="stat-label">Avg. Match Score</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📩 Recent Student Enquiries</div>
+      ${SAMPLE_ALUMNI.slice(0,3).map(a=>`
+        <div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:36px;height:36px;border-radius:50%;background:${a.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">${a.avatar}</div>
+          <div style="flex:1"><div style="font-weight:700;font-size:12px">${a.name}</div><div style="font-size:11px;color:var(--muted)">${a.graduated.split('·')[0].trim()} · Interested in MBA</div></div>
+          <button class="btn btn-forest btn-sm" onclick="toast('Response sent!','success')">Reply</button>
+        </div>`).join('')}
+    </div>
+  `);
+}
+
+function renderCompanyDashboard(){
+  setHTML(`
+    <div class="hero-banner">
+      <div style="position:relative;z-index:1">
+        <div class="hero-title">${CU.company||CU.name}</div>
+        <div class="hero-sub" style="margin-bottom:16px">${CU.industry||'Company'} · Campus Recruitment</div>
+        <button class="btn btn-amber btn-sm" onclick="gotoScreen('post-drive')">💼 Post Hiring Drive</button>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-num">2</div><div class="stat-label">Active Drives</div></div>
+      <div class="stat-card"><div class="stat-icon">📩</div><div class="stat-num">431</div><div class="stat-label">Applications</div></div>
+      <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-num">18</div><div class="stat-label">Shortlisted</div></div>
+      <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-num">6</div><div class="stat-label">Offers Made</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">💼 Your Active Drives</div>
+      ${SAMPLE_JOBS.slice(0,2).map(j=>`
+        <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;align-items:start">
+            <div><div style="font-weight:700;font-size:13px">${j.title}</div><div style="font-size:11px;color:var(--muted)">${j.ctc} · Deadline: ${j.deadline}</div></div>
+            <span class="tag tag-green">ACTIVE</span>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="gotoScreen('applications-recv')">📩 ${j.applicants} Applications</button>
+            <button class="btn btn-ghost btn-sm" onclick="toast('Drive paused')">Pause Drive</button>
+          </div>
+        </div>`).join('')}
+    </div>
+  `);
+}
+
+function renderAlumniDashboard(){
+  setHTML(`
+    <div class="hero-banner">
+      <div style="position:relative;z-index:1">
+        <div class="hero-title">Welcome, ${CU.name.split(' ')[0]} 🤝</div>
+        <div class="hero-sub" style="margin-bottom:16px">${CU.graduated_from||'Alumni'} · ${CU.current_company||'Mentor'}</div>
+        <button class="btn btn-amber btn-sm" onclick="gotoScreen('mentor-board')">🤝 View Mentorship Requests</button>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-icon">👤</div><div class="stat-num">3</div><div class="stat-label">Active Mentees</div></div>
+      <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-num">12</div><div class="stat-label">Sessions Done</div></div>
+      <div class="stat-card"><div class="stat-icon">💡</div><div class="stat-num">1</div><div class="stat-label">Opportunity Posted</div></div>
+      <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-num">4.9</div><div class="stat-label">Mentor Rating</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📩 Pending Mentorship Requests</div>
+      ${SAMPLE_ALUMNI.slice(0,2).map(a=>`
+        <div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:36px;height:36px;border-radius:50%;background:${a.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">${a.avatar}</div>
+          <div style="flex:1"><div style="font-weight:700;font-size:12px">Student seeking guidance on: ${a.mentors.split(',')[0]}</div><div style="font-size:11px;color:var(--muted)">Sent 2 days ago</div></div>
+          <button class="btn btn-forest btn-sm" onclick="toast('Mentorship session accepted!','success')">Accept</button>
+        </div>`).join('')}
+    </div>
+  `);
+}
+
+function renderAdminDashboard(){
+  setHTML(`
+    <div class="hero-banner">
+      <div style="position:relative;z-index:1">
+        <div class="hero-title">Nexus Campus Admin ⚙️</div>
+        <div class="hero-sub">Platform overview — posts, users, analytics</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-icon">🏛️</div><div class="stat-num">${SAMPLE_COLLEGES.length}</div><div class="stat-label">Colleges</div></div>
+      <div class="stat-card"><div class="stat-icon">💼</div><div class="stat-num">${SAMPLE_JOBS.length}</div><div class="stat-label">Job Drives</div></div>
+      <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-num">${SAMPLE_BOOKS.length}</div><div class="stat-label">Books Listed</div></div>
+      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-num">247</div><div class="stat-label">Registered Users</div></div>
+    </div>
+  `);
+}
+
+// ── COLLEGES ────────────────────────────────────────────────────────
+function renderColleges(){
+  setHTML(`
+    <div class="filter-bar">
+      <input class="fi-search" id="c-search" placeholder="🔍 Search college, course, area..." oninput="filterColleges()">
+      <select class="filter-select" id="c-type" onchange="filterColleges()">
+        <option value="">All Types</option>
+        <option>Engineering</option><option>Medical</option><option>Management</option>
+        <option>Arts & Science</option><option>Law</option>
+      </select>
+      <select class="filter-select" id="c-budget" onchange="filterColleges()">
+        <option value="">Any Budget</option>
+        <option value="100000">Under ₹1L/yr</option>
+        <option value="300000">Under ₹3L/yr</option>
+        <option value="600000">Under ₹6L/yr</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px" id="college-results"></div>
+  `);
+  filterColleges();
+}
+
+function filterColleges(){
+  const search=(document.getElementById('c-search')||{}).value?.toLowerCase()||'';
+  const type=(document.getElementById('c-type')||{}).value||'';
+  let list=SAMPLE_COLLEGES.filter(c=>{
+    if(search&&!c.name.toLowerCase().includes(search)&&!c.courses.toLowerCase().includes(search)&&!c.area.toLowerCase().includes(search))return false;
+    if(type&&!c.type.toLowerCase().includes(type.toLowerCase()))return false;
+    return true;
+  });
+  const el=document.getElementById('college-results');
+  if(!el)return;
+  if(!list.length){el.innerHTML=`<div class="empty" style="grid-column:span 2"><div class="empty-icon">🏛️</div><div class="empty-title">No colleges found</div><div class="empty-sub">Try adjusting your filters</div></div>`;return;}
+  el.innerHTML=list.map(c=>`
+    <div class="card" style="border-top:4px solid ${c.color}">
+      <div style="display:flex;gap:12px;align-items:start;margin-bottom:14px">
+        <div style="width:50px;height:50px;border-radius:12px;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${c.logo}</div>
+        <div style="flex:1">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:800">${c.name}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">${c.area} · NAAC ${c.naac}</div>
+          <span class="tag tag-green" style="margin-top:5px">${c.match}% match for you</span>
+        </div>
+      </div>
+      <!-- Side-by-side comparison facts -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="background:var(--cream);border-radius:8px;padding:10px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700">Courses</div>
+          <div style="font-size:12px;font-weight:700;margin-top:3px;color:var(--ink)">${c.courses}</div>
+        </div>
+        <div style="background:var(--cream);border-radius:8px;padding:10px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700">Fee Range</div>
+          <div style="font-size:12px;font-weight:700;margin-top:3px;color:var(--ink)">${c.fee_range}</div>
+        </div>
+        <div style="background:var(--cream);border-radius:8px;padding:10px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700">Total Seats</div>
+          <div style="font-size:12px;font-weight:700;margin-top:3px;color:var(--ink)">${c.seats.toLocaleString()}</div>
+        </div>
+        <div style="background:${c.deadline.includes('Feb')||c.deadline.includes('Mar')?'var(--red-light)':'var(--amber-light)'};border-radius:8px;padding:10px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700">Apply By</div>
+          <div style="font-size:12px;font-weight:800;margin-top:3px;color:${c.deadline.includes('Feb')||c.deadline.includes('Mar')?'var(--red)':'var(--amber)'}">${c.deadline}</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px">
+        🎁 Scholarship: ${c.scholarship} &nbsp;·&nbsp; Facilities: ${c.facilities.slice(0,3).join(', ')}
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-forest" style="flex:1;font-size:12px" onclick="toast('Application request sent to ${c.name}!','success')">Apply Now</button>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Saved to shortlist ♡','success')">♡ Save</button>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Enquiry sent!','success')">✉️ Enquire</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── EVENTS ──────────────────────────────────────────────────────────
+function renderEvents(){
+  setHTML(`
+    <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800">Upcoming Campus Events</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Fests, open days, competitions & seminars across Indore</div></div>
+      ${CU.role==='college'?`<button class="btn btn-forest" onclick="gotoScreen('post-event')">+ Post Event</button>`:''}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+    ${SAMPLE_EVENTS.map(e=>`
+      <div class="card" style="border-left:4px solid ${e.color}">
+        <div style="display:flex;gap:14px;align-items:start">
+          <div style="width:52px;height:52px;border-radius:12px;background:${e.color};display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${e.logo}</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:6px">
+              <div>
+                <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:800">${e.title}</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">${e.org} · ${e.area}</div>
+              </div>
+              <span class="tag tag-amber">${e.type}</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin:10px 0;line-height:1.6">${e.desc}</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+              <div style="background:var(--cream);border-radius:7px;padding:8px;text-align:center"><div style="font-size:9px;text-transform:uppercase;font-weight:700;color:var(--muted)">Date</div><div style="font-size:11px;font-weight:800;margin-top:2px">${e.date}</div></div>
+              <div style="background:var(--red-light);border-radius:7px;padding:8px;text-align:center"><div style="font-size:9px;text-transform:uppercase;font-weight:700;color:var(--muted)">Register By</div><div style="font-size:11px;font-weight:800;color:var(--red);margin-top:2px">${e.reg_deadline}</div></div>
+              <div style="background:var(--forest-light);border-radius:7px;padding:8px;text-align:center"><div style="font-size:9px;text-transform:uppercase;font-weight:700;color:var(--muted)">Prize / Fee</div><div style="font-size:11px;font-weight:800;color:var(--forest);margin-top:2px">${e.prize}</div></div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-forest btn-sm" style="flex:1" onclick="toast('Registered for ${e.title}! Confirmation sent.','success')">✅ Register Now</button>
+              <button class="btn btn-ghost btn-sm" onclick="toast('Added to calendar 📅')">+ Calendar</button>
+              <button class="btn btn-ghost btn-sm" onclick="toast('Shared!','success')">↗ Share</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+  `);
+}
+
+// ── JOB DRIVES ──────────────────────────────────────────────────────
+function renderJobs(){
+  setHTML(`
+    <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800">Campus Job & Internship Drives</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Real opportunities from companies actively hiring in Indore</div></div>
+      ${CU.role==='company'?`<button class="btn btn-forest" onclick="gotoScreen('post-drive')">+ Post Drive</button>`:''}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+    ${SAMPLE_JOBS.map(j=>`
+      <div class="card">
+        <div style="display:flex;gap:14px;align-items:start">
+          <div style="width:52px;height:52px;border-radius:12px;background:${j.color};display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${j.logo}</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:6px">
+              <div>
+                <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:800">${j.title}</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">${j.company}</div>
+              </div>
+              <span class="tag ${j.type==='Internship'?'tag-amber':'tag-green'}">${j.type}</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin:10px 0;line-height:1.6">${j.desc}</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+              <div style="background:var(--forest-light);border-radius:7px;padding:8px;text-align:center"><div style="font-size:9px;text-transform:uppercase;font-weight:700;color:var(--muted)">Package</div><div style="font-size:11px;font-weight:800;color:var(--forest);margin-top:2px">${j.ctc}</div></div>
+              <div style="background:var(--cream);border-radius:7px;padding:8px;text-align:center"><div style="font-size:9px;text-transform:uppercase;font-weight:700;color:var(--muted)">Eligible</div><div style="font-size:10px;font-weight:700;margin-top:2px">${j.eligible}</div></div>
+              <div style="background:var(--red-light);border-radius:7px;padding:8px;text-align:center"><div style="font-size:9px;text-transform:uppercase;font-weight:700;color:var(--muted)">Apply By</div><div style="font-size:11px;font-weight:800;color:var(--red);margin-top:2px">${j.deadline}</div></div>
+              <div style="background:var(--cream);border-radius:7px;padding:8px;text-align:center"><div style="font-size:9px;text-transform:uppercase;font-weight:700;color:var(--muted)">Applied</div><div style="font-size:11px;font-weight:700;margin-top:2px">${j.applicants}</div></div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:10px">
+              🎯 Skills: ${j.skills.join(' · ')} &nbsp;·&nbsp; 🏛️ Colleges: ${j.colleges.join(', ')}
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-forest btn-sm" style="flex:1" onclick="toast('Application submitted for ${j.title}! 🎉','success')">Apply Now</button>
+              <button class="btn btn-ghost btn-sm" onclick="toast('Saved ♡','success')">♡ Save</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+  `);
+}
+
+// ── BOOKS ───────────────────────────────────────────────────────────
+function renderBooks(){
+  setHTML(`
+    <div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800">Book Marketplace</div><div style="font-size:12px;color:var(--muted)">Buy second-hand books from students — save up to 70%</div></div>
+      <button class="btn btn-forest" onclick="gotoScreen('sell-book')">+ Sell a Book</button>
+    </div>
+    <div class="filter-bar">
+      <input class="fi-search" placeholder="🔍 Search by title, author..." style="flex:1">
+      <select class="filter-select"><option>All Subjects</option><option>Engineering</option><option>Medical</option><option>Management</option><option>Commerce</option><option>Law</option></select>
+      <select class="filter-select"><option>All Conditions</option><option>Like New</option><option>Good</option><option>Fair</option></select>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+    ${SAMPLE_BOOKS.map(b=>`
+      <div class="card" style="display:flex;flex-direction:column">
+        <div style="text-align:center;font-size:36px;margin-bottom:12px;padding:16px;background:var(--cream);border-radius:10px">${b.emoji}</div>
+        <div style="font-weight:800;font-size:14px;line-height:1.3;margin-bottom:3px">${b.title}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${b.author} · ${b.edition} Ed.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+          <span class="tag tag-teal">${b.subject}</span>
+          <span class="tag ${b.condition==='Like New'?'tag-green':b.condition==='Good'?'tag-amber':'tag-blue'}">${b.condition}</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px">
+          <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--forest)">₹${b.price}</div>
+          <div style="font-size:12px;color:var(--muted);text-decoration:line-through">₹${b.mrp}</div>
+          <span class="tag tag-green">${Math.round((1-b.price/b.mrp)*100)}% off</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;flex:1">👤 ${b.seller} · 📦 ${b.delivery} · 🕐 ${b.posted}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-forest btn-sm" style="flex:1" onclick="toast('Seller contacted! They will reach you shortly.','success')">Contact Seller</button>
+          <button class="btn btn-ghost btn-sm" onclick="toast('Saved ♡','success')">♡</button>
+        </div>
+      </div>`).join('')}
+    </div>
+  `);
+}
+
+function renderSellBook(){
+  setHTML(`
+    <div class="card" style="max-width:560px">
+      <div class="card-title">📚 List a Book for Sale</div>
+      <div class="fg"><label class="fl">Book Title</label><input class="fi" placeholder="e.g. Operating Systems by Silberschatz"></div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Author</label><input class="fi" placeholder="Author name"></div>
+        <div class="fg"><label class="fl">Edition</label><input class="fi" placeholder="e.g. 10th, 2024"></div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Subject / Stream</label><select class="fi"><option>Engineering</option><option>Medical</option><option>Management</option><option>Commerce</option><option>Law</option><option>Arts</option></select></div>
+        <div class="fg"><label class="fl">Condition</label><select class="fi"><option>Like New</option><option>Good</option><option>Fair</option></select></div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">MRP (₹)</label><input class="fi" type="number" placeholder="Original price"></div>
+        <div class="fg"><label class="fl">Your Asking Price (₹)</label><input class="fi" type="number" placeholder="Your selling price"></div>
+      </div>
+      <div class="fg"><label class="fl">Delivery Option</label><select class="fi"><option>Meetup only</option><option>Delivery available</option><option>Both</option></select></div>
+      <div class="fg"><label class="fl">Meetup Area (if applicable)</label><input class="fi" placeholder="e.g. Vijay Nagar, DAVV campus"></div>
+      <button class="btn btn-main" onclick="toast('Book listed successfully! Students will contact you.','success')">List Book for Sale →</button>
+    </div>
+  `);
+}
+
+// ── ALUMNI CONNECT ───────────────────────────────────────────────────
+function renderAlumniConnect(){
+  setHTML(`
+    <div style="margin-bottom:16px">
+      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800">Alumni Mentors Network</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">Connect with alumni from top companies for career guidance, mock interviews and referrals</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+    ${SAMPLE_ALUMNI.map(a=>`
+      <div class="card" style="opacity:${a.available?1:0.7}">
+        <div style="display:flex;gap:12px;align-items:start;margin-bottom:12px">
+          <div style="width:50px;height:50px;border-radius:50%;background:${a.color};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0">${a.avatar}</div>
+          <div style="flex:1">
+            <div style="font-weight:800;font-size:14px">${a.name}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:1px">${a.company} · ${a.role}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px">🎓 ${a.graduated}</div>
+          </div>
+          <span class="tag ${a.available?'tag-green':'tag-amber'}">${a.available?'Available':'Busy'}</span>
+        </div>
+        <div style="background:var(--cream);border-radius:8px;padding:10px;margin-bottom:12px">
+          <div style="font-size:9px;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:4px">Mentors on</div>
+          <div style="font-size:12px;color:var(--ink)">${a.mentors}</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:11px;color:var(--muted)">📅 ${a.sessions} sessions done</div>
+          <div style="font-size:11px;color:var(--muted)">📍 ${a.city}</div>
+        </div>
+        <button class="btn btn-forest btn-sm btn-full" ${!a.available?'disabled style="opacity:.5;cursor:not-allowed"':''} onclick="toast('Mentorship request sent to ${a.name}! They will respond within 48 hours.','success')">
+          ${a.available?'🤝 Request Mentorship':'Currently Unavailable'}
+        </button>
+      </div>`).join('')}
+    </div>
+  `);
+}
+
+// ── POST SCREENS ─────────────────────────────────────────────────────
+function renderPostAdmission(){
+  setHTML(`
+    <div class="card" style="max-width:600px">
+      <div class="card-title">🎓 Post Admission Information</div>
+      <div style="background:var(--forest-light);border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--forest)">
+        ✅ Your institution's details from registration are pre-filled. Fill in the current admission cycle details.
+      </div>
+      <div class="fg"><label class="fl">Programme / Course Name</label><input class="fi" placeholder="e.g. B.Tech CSE, MBA, MBBS"></div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Total Seats</label><input class="fi" type="number" placeholder="e.g. 120"></div>
+        <div class="fg"><label class="fl">Annual Fee (₹)</label><input class="fi" type="number" placeholder="e.g. 180000"></div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Application Deadline</label><input class="fi" type="date"></div>
+        <div class="fg"><label class="fl">Session Start</label><input class="fi" placeholder="e.g. August 2026"></div>
+      </div>
+      <div class="fg"><label class="fl">Eligibility Criteria</label><textarea class="fi" rows="3" placeholder="e.g. 12th pass with PCM, min 60% marks. JEE score accepted."></textarea></div>
+      <div class="fg"><label class="fl">Scholarships Available</label><input class="fi" placeholder="e.g. Merit-based up to 30%, SC/ST waiver"></div>
+      <div class="fg"><label class="fl">How to Apply</label><textarea class="fi" rows="2" placeholder="e.g. Apply via our website or visit Admissions Office."></textarea></div>
+      <div class="fg"><label class="fl">NAAC / NBA Grade</label><input class="fi" placeholder="e.g. A++, A, B++"></div>
+      <button class="btn-main" onclick="toast('Admission posting live! Students can now discover and apply.','success')">Publish Admission Info →</button>
+    </div>
+  `);
+}
+
+function renderPostEvent(){
+  setHTML(`
+    <div class="card" style="max-width:580px">
+      <div class="card-title">📅 Post a Campus Event</div>
+      <div class="fg"><label class="fl">Event Name</label><input class="fi" placeholder="e.g. Annual Tech Fest TechStorm 2026"></div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Event Type</label><select class="fi"><option>Technical Fest</option><option>Cultural Fest</option><option>Open Day / Campus Visit</option><option>Seminar / Talk</option><option>Competition</option><option>Recruitment Drive</option><option>Workshop</option></select></div>
+        <div class="fg"><label class="fl">Event Date</label><input class="fi" type="date"></div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Registration Deadline</label><input class="fi" type="date"></div>
+        <div class="fg"><label class="fl">Registration Fee (₹)</label><input class="fi" type="number" placeholder="0 for free events"></div>
+      </div>
+      <div class="fg"><label class="fl">Prize / Benefit</label><input class="fi" placeholder="e.g. ₹1.5L prize pool, Certificate, Internship offer"></div>
+      <div class="fg"><label class="fl">Who Can Participate</label><input class="fi" placeholder="e.g. All B.Tech students, MBA students, Open to all"></div>
+      <div class="fg"><label class="fl">Event Description</label><textarea class="fi" rows="3" placeholder="Describe the event, rounds, what participants will experience..."></textarea></div>
+      <div class="fg"><label class="fl">Contact / Registration Link</label><input class="fi" placeholder="Website or WhatsApp number for registration"></div>
+      <button class="btn-main" onclick="toast('Event published! Students will see it immediately.','success')">Publish Event →</button>
+    </div>
+  `);
+}
+
+function renderPostDrive(){
+  setHTML(`
+    <div class="card" style="max-width:580px">
+      <div class="card-title">💼 Post a Campus Hiring Drive</div>
+      <div class="fg"><label class="fl">Job / Role Title</label><input class="fi" placeholder="e.g. Software Engineer — Campus Hire 2026"></div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Role Type</label><select class="fi"><option>Full Time</option><option>Internship</option><option>Part Time</option><option>PPO (Pre-Placement Offer)</option></select></div>
+        <div class="fg"><label class="fl">CTC / Stipend</label><input class="fi" placeholder="e.g. ₹4–7 LPA or ₹15,000/mo"></div>
+      </div>
+      <div class="fg"><label class="fl">Eligible Courses / Streams</label><input class="fi" placeholder="e.g. B.Tech CSE/IT, MBA Finance 2025-26 batch"></div>
+      <div class="fg"><label class="fl">Minimum CGPA / Percentage</label><input class="fi" placeholder="e.g. 6.0 CGPA or 60%"></div>
+      <div class="fg"><label class="fl">Skills Required</label><input class="fi" placeholder="e.g. Python, SQL, Communication, Excel"></div>
+      <div class="fg"><label class="fl">Target Colleges</label><input class="fi" placeholder="e.g. DAVV, Medicaps, SGSITS or 'All Indore Colleges'"></div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Application Deadline</label><input class="fi" type="date"></div>
+        <div class="fg"><label class="fl">Drive Date</label><input class="fi" type="date"></div>
+      </div>
+      <div class="fg"><label class="fl">Job Description</label><textarea class="fi" rows="3" placeholder="Describe the role, responsibilities, selection process..."></textarea></div>
+      <button class="btn-main" onclick="toast('Hiring drive posted! Students are being notified.','success')">Post Hiring Drive →</button>
+    </div>
+  `);
+}
+
+// ── STUB SCREENS ─────────────────────────────────────────────────────
+function renderMyApplications(){setHTML(`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No Applications Yet</div><div class="empty-sub">Apply to colleges or job drives — your applications will appear here.</div><button class="btn btn-forest" onclick="gotoScreen('colleges')">Browse Colleges →</button></div>`);}
+function renderMyProfile(){
+  setHTML(`
+    <div class="card" style="max-width:520px">
+      <div class="card-title">👤 My Profile</div>
+      <div style="display:flex;gap:14px;align-items:center;margin-bottom:20px">
+        <div style="width:60px;height:60px;border-radius:14px;background:${CU.color||'#1A3C2E'};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff">${CU.name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+        <div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800">${CU.name}</div><div style="font-size:12px;color:var(--muted)">${CU.email}</div></div>
+      </div>
+      <div class="fg"><label class="fl">Full Name</label><input class="fi" value="${CU.name||''}"></div>
+      <div class="fg"><label class="fl">Phone</label><input class="fi" value="${CU.phone||''}"></div>
+      ${CU.role==='student'?`
+        <div class="fg"><label class="fl">College</label><input class="fi" value="${CU.college_name||CU.college||''}"></div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Course</label><input class="fi" value="${CU.course||''}"></div>
+          <div class="fg"><label class="fl">Year</label><input class="fi" value="${CU.year||CU.year_of_study||''}"></div>
+        </div>`:''
+      }
+      <button class="btn-main" onclick="toast('Profile updated!','success')">Save Changes →</button>
+    </div>
+  `);
+}
+function renderStudentPool(){setHTML(`<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">Student Pool</div><div class="empty-sub">Students who have applied or shown interest in your institution will appear here.</div></div>`);}
+function renderMyListings(){setHTML(`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Your Listings</div><div class="empty-sub">Admission posts and events you've published will appear here.</div><button class="btn btn-forest" onclick="gotoScreen('post-admission')">Post Admission Info →</button></div>`);}
+function renderTalentPool(){setHTML(`<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">Talent Pool</div><div class="empty-sub">Students who have applied to your drives will appear here.</div></div>`);}
+function renderMyDrives(){setHTML(`<div class="empty"><div class="empty-icon">💼</div><div class="empty-title">Your Hiring Drives</div><div class="empty-sub">Drives you have posted will appear here.</div><button class="btn btn-forest" onclick="gotoScreen('post-drive')">Post a Drive →</button></div>`);}
+function renderApplicationsRecv(){setHTML(`<div class="empty"><div class="empty-icon">📩</div><div class="empty-title">Applications Received</div><div class="empty-sub">Student applications to your drives will appear here.</div></div>`);}
+function renderMentorBoard(){setHTML(`<div class="empty"><div class="empty-icon">🤝</div><div class="empty-title">Mentorship Requests</div><div class="empty-sub">Students seeking your guidance will appear here once you're active.</div></div>`);}
+function renderPostOpportunity(){setHTML(`<div class="card" style="max-width:520px"><div class="card-title">💡 Post an Opportunity</div><div class="fg"><label class="fl">Opportunity Type</label><select class="fi"><option>Job Referral</option><option>Internship</option><option>Freelance Project</option><option>Mentorship Slot</option></select></div><div class="fg"><label class="fl">Company / Context</label><input class="fi" placeholder="Where is this opportunity?"></div><div class="fg"><label class="fl">Details</label><textarea class="fi" rows="4" placeholder="Describe the opportunity, eligibility, how to reach you..."></textarea></div><button class="btn-main" onclick="toast('Opportunity posted!','success')">Post →</button></div>`);}
+function renderMyMentees(){setHTML(`<div class="empty"><div class="empty-icon">👤</div><div class="empty-title">My Mentees</div><div class="empty-sub">Students you are currently mentoring will appear here.</div></div>`);}
+function renderAnalytics(){setHTML(`<div class="stat-grid"><div class="stat-card"><div class="stat-icon">👁️</div><div class="stat-num">1,247</div><div class="stat-label">Profile Views</div></div><div class="stat-card"><div class="stat-icon">📩</div><div class="stat-num">84</div><div class="stat-label">Enquiries</div></div><div class="stat-card"><div class="stat-icon">✅</div><div class="stat-num">12</div><div class="stat-label">Conversions</div></div><div class="stat-card"><div class="stat-icon">📈</div><div class="stat-num">14.3%</div><div class="stat-label">Conversion Rate</div></div></div>`);}
+function renderAllPosts(){setHTML(`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">All Posts</div><div class="empty-sub">Admin view of all platform posts.</div></div>`);}
+function renderAllUsers(){setHTML(`<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">All Users</div><div class="empty-sub">Admin view of all registered users.</div></div>`);}
+
+// ── TOAST ───────────────────────────────────────────────────────────
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className=`toast toast-${type||'default'} show`;
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ── INIT ────────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const ls=document.getElementById('loading-screen');
+    ls.style.opacity='0';
+    setTimeout(()=>{ls.style.display='none';},600);
+
+    try{
+      const saved=localStorage.getItem('nexus_campus_user');
+      if(saved){
+        const parsed=JSON.parse(saved);
+        if(parsed && parsed.name && parsed.role){
+          CU=parsed;
+          enterApp();
+        } else {
+          localStorage.removeItem('nexus_campus_user');
+          showAuth();
+        }
+      } else {
+        showAuth();
+      }
+    } catch(e){
+      localStorage.removeItem('nexus_campus_user');
+      showAuth();
+    }
+  },1600);
+});
+function showAuth(){
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('app-screen').style.display='none';
+}
+</script>
+</body>
+</html>
